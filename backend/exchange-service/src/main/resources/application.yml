@@ -1,0 +1,35 @@
+spring:
+  application:
+    name: exchange-service
+  rabbitmq:
+    host: ${RABBITMQ_HOST:localhost}
+    port: ${RABBITMQ_PORT:5672}
+    username: ${RABBITMQ_USER:guest}
+    password: ${RABBITMQ_PASSWORD:guest}
+    publisher-confirm-type: correlated
+    template:
+      mandatory: true
+  datasource:
+    url: ${EXCHANGE_DB_URL:jdbc:mysql://localhost:3306/monkey_exchange?createDatabaseIfNotExist=true}
+    username: ${MYSQL_USER:monkeytrueque}
+    password: ${MYSQL_PASSWORD:monkeytrueque_local}
+  jpa:
+    hibernate:
+      ddl-auto: validate
+  mvc:
+    problemdetails:
+      # Devuelve el motivo de cada ResponseStatusException en "detail" para que la web lo muestre.
+      enabled: true
+server:
+  port: ${SERVER_PORT:8082}
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,prometheus
+app:
+  cors-origin: ${CORS_ORIGIN:http://localhost:4200}
+  jwt-secret: ${APP_JWT_SECRET:bW9ua2V5dHJ1ZXF1ZS1sb2NhbC1kZXYtaG1hYy1rZXktMzItYnl0ZXM=}
+  catalog-url: ${CATALOG_URL:http://localhost:8081}
+  demo-data:
+    enabled: ${DEMO_DATA_ENABLED:false}

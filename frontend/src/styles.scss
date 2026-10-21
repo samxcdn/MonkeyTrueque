@@ -1,0 +1,44 @@
+@use '@angular/material' as mat;
+@use './styles/tokens';
+@use './styles/marketplace';
+@use './styles/_admin.scss';
+
+$marketplace-theme: mat.define-theme((
+  color: (
+    theme-type: light,
+    primary: mat.$violet-palette,
+    tertiary: mat.$violet-palette,
+  ),
+  typography: (
+    plain-family: 'Lexend, sans-serif',
+    brand-family: 'Khand, sans-serif',
+    bold-weight: 600,
+    medium-weight: 500,
+    regular-weight: 400,
+  ),
+  density: (scale: 0),
+));
+
+@include mat.core();
+
+:root {
+  @include mat.all-component-themes($marketplace-theme);
+}
+
+:root {
+  --mat-sys-primary: #{tokens.$action};
+  --mat-sys-on-primary: #{tokens.$custard};
+  --mat-sys-primary-container: #{tokens.$barranco};
+  --mat-sys-on-primary-container: #{tokens.$deep};
+  --mat-sys-surface: #{tokens.$paper};
+  --mat-sys-on-surface: #{tokens.$ink};
+  --mat-sys-outline: rgba(38, 21, 77, .34);
+  --mdc-filled-button-container-color: #{tokens.$action};
+  --mdc-filled-button-label-text-color: #{tokens.$custard};
+  --mdc-outlined-button-outline-color: rgba(38, 21, 77, .17);
+  --mdc-outlined-button-label-text-color: #{tokens.$ink};
+  --mdc-outlined-text-field-outline-color: rgba(38, 21, 77, .28);
+  --mdc-outlined-text-field-focus-outline-color: #{tokens.$action};
+  --mdc-outlined-text-field-label-text-color: #{tokens.$muted};
+  --mdc-outlined-text-field-input-text-color: #{tokens.$ink};
+}

@@ -1,0 +1,29 @@
+<main class="auth-page">
+  <section class="auth-visual" aria-labelledby="auth-promise">
+    <div class="auth-visual__content">
+      <h1 id="auth-promise">Dale una nueva vida a lo que ya no usas.</h1>
+      <p>Truequea, vende o regala con personas de tu comunidad. Fácil, directo y entre vecinos.</p>
+      <div class="auth-mascot-wrap"><img class="auth-mascot" src="/brand/login-monkey-balloons.png" alt="Mono volando con globos de colores" /></div>
+    </div>
+    <div class="auth-trust"><span>Acceso seguro</span><span>Comunidad local</span><span>Hecho en Perú</span></div>
+  </section>
+
+  <section class="auth-form-side" aria-label="Acceso a MonkeyTrueque">
+    <a class="auth-mobile-brand" routerLink="/">Monkey<span>Trueque</span></a>
+    <div class="auth-form-card">
+      <div class="auth-form-heading"><div class="auth-form-heading__title"><img src="/brand/monkeytrueque-crowned-head.png" alt="" width="40" height="40" /><h2>{{ registering() ? 'Crea tu cuenta' : 'Entra a MonkeyTrueque' }}</h2></div><span>{{ registering() ? 'Regístrate para empezar a intercambiar.' : 'Inicia sesión para continuar.' }}</span></div>
+      @if (sessionExpired) { <p class="auth-session-expired" role="status">Tu sesión ha expirado. Por favor inicia sesión nuevamente.</p> }
+      <form class="auth-form-fields" (submit)="$event.preventDefault(); submit()">
+        @if (registering()) { <label>Nombre completo<input required maxlength="120" autocomplete="name" [value]="name()" (input)="name.set($any($event.target).value)" /></label> }
+        <label>Nombre de usuario<input required type="text" minlength="3" maxlength="32" pattern="[A-Za-z0-9._-]+" autocomplete="username" [value]="username()" (input)="username.set($any($event.target).value)" /><small>Usa de 3 a 32 letras, numeros, puntos, guiones o guion bajo.</small></label>
+        <label>Contraseña<input required type="password" minlength="8" maxlength="100" [attr.autocomplete]="registering() ? 'new-password' : 'current-password'" [value]="password()" (input)="password.set($any($event.target).value)" />@if (registering()) { <small>Usa al menos 8 caracteres.</small> }</label>
+        @if (registering()) { <label>Confirmar contraseña<input required type="password" minlength="8" maxlength="100" autocomplete="new-password" [value]="confirmPassword()" (input)="confirmPassword.set($any($event.target).value)" /></label> }
+        @if (error()) { <p class="auth-error" role="alert">{{ error() }}</p> }
+        <button class="auth-submit" type="submit" [disabled]="busy()">{{ busy() ? 'Un momento…' : registering() ? 'Crear cuenta' : 'Iniciar sesión' }}</button>
+      </form>
+      <p class="auth-switch">{{ registering() ? '¿Ya tienes una cuenta?' : '¿Todavía no tienes una cuenta?' }} <button type="button" (click)="toggleMode()">{{ registering() ? 'Inicia sesión' : 'Regístrate' }}</button></p>
+      <a class="auth-back-link" routerLink="/">← Volver a explorar publicaciones</a>
+    </div>
+    <p class="auth-legal">Al continuar, aceptas usar MonkeyTrueque con respeto y cuidar tus datos.</p>
+  </section>
+</main>

@@ -1,0 +1,1 @@
+ALTER TABLE user_profiles ADD COLUMN community_ids VARCHAR(2500) NOT NULL DEFAULT '';

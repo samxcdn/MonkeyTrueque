@@ -1,0 +1,63 @@
+<div class="restrictions-page">
+  <app-marketplace-header />
+  <main class="restrictions-shell">
+    <a class="back-link" routerLink="/cuenta"><mat-icon fontSet="material-icons-outlined" aria-hidden="true">arrow_back</mat-icon>Volver a mi perfil</a>
+    <header class="page-heading">
+      <span class="heading-icon" aria-hidden="true"><mat-icon fontSet="material-icons-outlined">gpp_maybe</mat-icon></span>
+      <div><p class="eyebrow">CENTRO DE CUENTA</p><h1>Medidas y revisiones</h1><p>Consulta qué funciones están limitadas y solicita una revisión si consideras que hubo un error.</p></div>
+    </header>
+
+    @if (hiddenListings().length) {
+      <section class="hidden-listings" aria-label="Publicaciones ocultadas por moderación">
+        @for (listing of hiddenListings(); track listing.id) {
+          <article class="hidden-listing-card"><mat-icon fontSet="material-icons-outlined" aria-hidden="true">visibility_off</mat-icon><div><h2>Tu publicación «{{ listing.title }}» ha sido ocultada</h2><p><strong>Motivo:</strong> {{ listing.moderationHiddenReason || 'Contacta con moderación para más información.' }}</p></div></article>
+        }
+      </section>
+    }
+
+    @if (loading()) {
+      <section class="state-card" aria-live="polite">Cargando la información de tu cuenta…</section>
+    } @else if (!user()) {
+      <section class="state-card"><h2>Inicia sesión para continuar</h2><p>Las medidas de la cuenta solo son visibles para ti.</p></section>
+    } @else if (!sanctions().length && !appeals().length && !hiddenListings().length) {
+      <section class="state-card state-card--clear"><mat-icon fontSet="material-icons-outlined" aria-hidden="true">check_circle</mat-icon><div><h2>No tienes medidas activas</h2><p>Si se aplica una medida a tu cuenta, aquí encontrarás el motivo y el plazo.</p></div></section>
+    } @else {
+      @if (sanctions().length) {
+      <section class="notice-card"><mat-icon fontSet="material-icons-outlined" aria-hidden="true">info</mat-icon><p>Estas medidas están activas. Cada solicitud se envía al equipo para una revisión independiente.</p></section>
+      <div class="sanction-list">
+        @for (sanction of sanctions(); track sanction.id) {
+          <article class="sanction-card">
+            <div class="sanction-card__header"><div><span class="sanction-kind">{{ label(sanction) }}</span><h2>{{ heading(sanction) }}</h2></div><span class="active-badge">Activa</span></div>
+            <div class="detail-row"><span>Motivo indicado</span><p>{{ sanction.reason }}</p></div>
+            <div class="detail-row"><span>Vigencia</span><p>{{ sanction.expiresAt ? ('Hasta el ' + (sanction.expiresAt | date:'d MMMM y, HH:mm')) : 'Sin fecha de finalización indicada' }}</p></div>
+
+            @if (appealFor(sanction.id); as appeal) {
+              <div class="appeal-status" role="status">
+                <mat-icon fontSet="material-icons-outlined" aria-hidden="true">{{ appeal.status === 'open' ? 'schedule' : appeal.status === 'accepted' ? 'check_circle' : 'info' }}</mat-icon>
+                <div><strong>{{ appeal.status === 'open' ? 'Solicitud en revisión' : appeal.status === 'accepted' ? 'Solicitud aceptada' : 'Solicitud revisada' }}</strong><p>{{ appeal.resolution || (appeal.status === 'open' ? 'Te mostraremos aquí la respuesta del equipo.' : 'Puedes consultar la resolución de tu solicitud aquí.') }}</p></div>
+              </div>
+            } @else {
+              <form class="appeal-form" (submit)="$event.preventDefault(); submit(sanction)">
+                <label [for]="'appeal-' + sanction.id">¿Por qué solicitas revisar esta medida?</label>
+                <textarea [id]="'appeal-' + sanction.id" rows="4" maxlength="2000" [value]="draftFor(sanction.id)" (input)="setDraft(sanction.id, $any($event.target).value)" placeholder="Describe brevemente el contexto que debería considerar el equipo."></textarea>
+                <app-evidence-attachments (attachmentsChange)="setEvidence(sanction.id, $event)" />
+                <div class="form-footer"><small>Hasta 2000 caracteres</small><button type="submit" [disabled]="busyId() === sanction.id || !draftFor(sanction.id).trim()">{{ busyId() === sanction.id ? 'Enviando…' : 'Enviar solicitud de revisión' }}</button></div>
+              </form>
+            }
+          </article>
+        }
+      </div>
+      }
+      @if (appealsWithoutActiveSanction().length) {
+        <section class="sanction-list appeal-history"><header><h2>Solicitudes y respuestas</h2><p>Las solicitudes y respuestas del equipo quedan guardadas aquí para que puedas consultarlas después.</p></header>
+          @for (appeal of appealsWithoutActiveSanction(); track appeal.id) {
+            <article class="sanction-card appeal-history__item"><div class="sanction-card__header"><h3>{{ appeal.status === 'open' ? 'Solicitud en revisión' : appeal.status === 'accepted' ? 'Apelación aceptada · medida retirada' : 'Apelación rechazada · medida vigente' }}</h3><span class="active-badge">{{ appeal.status === 'open' ? 'Pendiente' : appeal.status === 'accepted' ? 'Aceptada' : 'Rechazada' }}</span></div><div class="detail-row"><span>{{ appeal.status === 'open' ? 'Tu solicitud' : 'Resolución del equipo' }}</span><p>{{ appeal.status === 'open' ? appeal.explanation : appeal.resolution }}</p></div>@if (appeal.reviewedAt) { <small>Resuelta el {{ appeal.reviewedAt | date:'d MMMM y, HH:mm' }}</small> }</article>
+          }
+        </section>
+      } @else if (!sanctions().length) {
+        <section class="state-card state-card--clear"><mat-icon fontSet="material-icons-outlined" aria-hidden="true">check_circle</mat-icon><div><h2>No tienes medidas activas</h2><p>Tu historial de medidas y revisiones aparecerá aquí.</p></div></section>
+      }
+    }
+    <footer class="privacy-note"><mat-icon fontSet="material-icons-outlined" aria-hidden="true">lock</mat-icon><span>Esta información es privada y solo tú puedes verla.</span></footer>
+  </main>
+</div>

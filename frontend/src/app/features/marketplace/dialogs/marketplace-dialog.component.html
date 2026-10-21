@@ -1,0 +1,80 @@
+<header class="dialog-heading">
+  <div>
+    <h2 mat-dialog-title>{{ title }}</h2>
+    @if (data.mode === 'report') { <p>El equipo de moderación revisará tu reporte.</p> }
+  </div>
+  <button mat-icon-button mat-dialog-close aria-label="Cerrar ventana"><mat-icon fontSet="material-icons-outlined" aria-hidden="true">close</mat-icon></button>
+</header>
+<mat-dialog-content>
+  @switch (formMode) {
+    @case ('listing') {
+      @if (data.listing; as listing) {
+        <img class="detail-photo" [src]="listing.photos[0].src" [alt]="listing.photos[0].alt" />
+        <p class="condition-line"><span aria-hidden="true" class="status-dot"></span>{{ listing.condition }} <span>· {{ listing.districtId | titlecase }}</span></p>
+        <h3>{{ listing.title }}</h3>
+        <p>{{ listing.description }}</p>
+        <div class="detail-offer"><strong>Acepta a cambio</strong><span>{{ listing.acceptanceSummary }}</span></div>
+        <p class="trust-note"><mat-icon aria-hidden="true">verified_user</mat-icon>Revisa todas las fotos y conversa por el chat antes de coordinar el intercambio.</p>
+        <div class="detail-actions"><button mat-button class="report-link" type="button" (click)="quickReport()"><mat-icon aria-hidden="true">flag</mat-icon>Reportar publicación</button></div>
+      }
+    }
+    @case ('proposal') {
+      <form class="dialog-form" [formGroup]="offerForm" (ngSubmit)="submitProposal()">
+        @if (data.listing; as listing) { <div class="target-listing"><img [src]="listing.photos[0].src" [alt]="listing.photos[0].alt" /><span>Tu propuesta es para <strong>{{ listing.title }}</strong></span></div> }
+        <p class="form-intro">Cuéntale a la otra persona qué ofreces. Elige un objeto propio o describe el servicio con claridad.</p>
+        <mat-form-field appearance="outline"><mat-label>Qué ofreces</mat-label><input matInput formControlName="offeredTitle" placeholder="Ej. Kit de acuarelas y cuaderno A4" /><mat-hint>Nombre concreto del artículo o servicio</mat-hint>@if (offerForm.controls.offeredTitle.hasError('required') && offerForm.controls.offeredTitle.touched) { <mat-error>Describe lo que propones.</mat-error> }</mat-form-field>
+        <mat-form-field appearance="outline"><mat-label>Tipo de propuesta</mat-label><mat-select formControlName="offeredKind">@for (kind of data.listing?.accepts ?? ['object', 'service']; track kind) { <mat-option [value]="kind">{{ kind === 'object' ? 'Un objeto' : 'Un servicio' }}</mat-option> }</mat-select></mat-form-field>
+        <mat-form-field appearance="outline"><mat-label>Nota para la otra persona (opcional)</mat-label><textarea matInput rows="3" formControlName="note" placeholder="Puedo enviarte más fotos o coordinar en un punto público."></textarea></mat-form-field>
+        <div class="dialog-actions"><button mat-button type="button" mat-dialog-close>Volver</button><button mat-flat-button color="primary" type="submit">Enviar propuesta</button></div>
+      </form>
+    }
+    @case ('publish') {
+      <form class="dialog-form" [formGroup]="publishForm" (ngSubmit)="submitPublish()">
+        <mat-form-field appearance="outline"><mat-label>Modalidad</mat-label><mat-select formControlName="mode" (selectionChange)="onListingModeChange($event.value)"><mat-option value="trade">Trueque</mat-option><mat-option value="sale">Venta</mat-option><mat-option value="gift">Regalo</mat-option></mat-select><mat-hint>En Trueque el precio es opcional; en Venta es obligatorio.</mat-hint></mat-form-field>
+        <p class="form-intro">Publica objetos y servicios con hasta 3 fotos para mostrarlos desde varios ángulos.</p>
+        @if (photos.length) {
+          <div class="photo-preview-grid" aria-label="Fotos de la publicación">
+            @for (photo of photos; track photo.src; let index = $index) {
+              <figure class="photo-preview">
+                <img [src]="photo.src" [alt]="photo.alt" />
+                <figcaption>{{ index === 0 ? 'Foto de portada' : 'Foto ' + (index + 1) }}</figcaption>
+                <button type="button" [attr.aria-label]="'Quitar foto ' + (index + 1)" (click)="removePhoto(index)"><mat-icon fontSet="material-icons-outlined" aria-hidden="true">close</mat-icon></button>
+              </figure>
+            }
+          </div>
+        }
+        @if (photos.length < 3) {
+          <label class="upload-field upload-field--compact" for="listing-photos">
+            <mat-icon>add_photo_alternate</mat-icon><span>{{ photos.length ? 'Agregar más fotos' : 'Agrega fotos de tu publicación' }}</span><small>JPG, PNG o WebP · hasta 10 MB cada una · máximo 3 fotos</small>
+            <input id="listing-photos" type="file" accept="image/jpeg,image/png,image/webp" multiple (change)="onPhotoSelected($event)" />
+          </label>
+        }
+        @if (photoError) { <p class="field-error" role="alert">{{ photoError }}</p> }        <mat-form-field appearance="outline"><mat-label>Nombre de lo que ofreces</mat-label><input matInput formControlName="title" maxlength="70" />@if (publishForm.controls.title.hasError('required') && publishForm.controls.title.touched) { <mat-error>Escribe el nombre de tu publicación.</mat-error> }</mat-form-field>
+        <mat-form-field appearance="outline"><mat-label>Publico</mat-label><mat-select formControlName="kind" (selectionChange)="onListingKindChange($event.value)"><mat-option value="object">Un objeto</mat-option><mat-option value="service">Un servicio</mat-option></mat-select></mat-form-field>
+        @if (isSale || isTrade) { <mat-form-field appearance="outline"><mat-label>{{ isSale ? 'Precio (S/)' : 'Valor referencial (S/)' }}</mat-label><input matInput type="number" min="0.01" step="0.01" formControlName="price" placeholder="{{ isTrade ? 'Opcional' : 'Ej. 50.00' }}" />@if (isTrade) { <mat-hint>Opcional: orienta sobre el valor del artículo.</mat-hint> }@if (publishForm.controls.price.invalid && publishForm.controls.price.touched) { <mat-error>El precio debe ser mayor que cero.</mat-error> }</mat-form-field> }
+        <mat-form-field appearance="outline"><mat-label>{{ publishForm.controls.kind.value === 'service' ? 'Describe el servicio' : 'Describe el estado real' }}</mat-label><textarea matInput rows="3" formControlName="description" maxlength="320" [placeholder]="publishForm.controls.kind.value === 'service' ? 'Menciona qué incluye el servicio y cómo lo realizarías.' : 'Menciona cómo funciona y cualquier marca de uso.'"></textarea>@if (publishForm.controls.description.hasError('required') && publishForm.controls.description.touched) { <mat-error>Describe tu publicación con claridad.</mat-error> }</mat-form-field>
+        <div class="form-row"><mat-form-field appearance="outline"><mat-label>Distrito</mat-label><mat-select formControlName="districtId"><mat-option value="" disabled>Selecciona un distrito</mat-option>@for (district of data.districts ?? []; track district.id) { <mat-option [value]="district.id">{{ district.name }}</mat-option> }</mat-select>@if (publishForm.controls.districtId.invalid && publishForm.controls.districtId.touched) { <mat-error>Selecciona el distrito de la publicación.</mat-error> }</mat-form-field><mat-form-field appearance="outline"><mat-label>{{ publishForm.controls.kind.value === 'service' ? 'Experiencia' : 'Estado declarado' }}</mat-label><mat-select formControlName="condition"><mat-option value="Buen estado">{{ publishForm.controls.kind.value === 'service' ? 'Experiencia demostrable' : 'Buen estado' }}</mat-option><mat-option value="Funciona con marcas de uso">{{ publishForm.controls.kind.value === 'service' ? 'En desarrollo' : 'Funciona con marcas de uso' }}</mat-option></mat-select></mat-form-field></div>
+        <mat-form-field appearance="outline"><mat-label>Referencia de encuentro (opcional)</mat-label><input matInput formControlName="locationReference" maxlength="160" placeholder="Ej. Rambla Brasil" /><mat-hint>Coordinen el punto exacto por el chat.</mat-hint></mat-form-field>
+        <div class="form-row"><mat-form-field appearance="outline"><mat-label>Categoría</mat-label><mat-select formControlName="category">@for (category of availableCategories; track category.value) { <mat-option [value]="category.value">{{ category.label }}</mat-option> }</mat-select></mat-form-field><mat-form-field [hidden]="!isTrade" appearance="outline"><mat-label>Acepto a cambio</mat-label><mat-select formControlName="accepts"><mat-option value="object">Un objeto</mat-option><mat-option value="service">Un servicio</mat-option></mat-select></mat-form-field></div>
+        <mat-form-field [hidden]="!isTrade" appearance="outline"><mat-label>Qué aceptarías</mat-label><input matInput formControlName="acceptanceSummary" placeholder="Ej. libros de diseño o macetas" />@if (publishForm.controls.acceptanceSummary.hasError('required') && publishForm.controls.acceptanceSummary.touched) { <mat-error>Indica qué aceptarías.</mat-error> }</mat-form-field>
+        @if (publishError) { <p class="field-error" role="alert">{{ publishError }}</p> }
+        <div class="dialog-actions"><button mat-button type="button" mat-dialog-close [disabled]="publishing">Cancelar</button><button mat-flat-button color="primary" type="submit" [disabled]="publishing">{{ publishing ? (data.mode === 'edit' ? 'Guardando…' : 'Publicando…') : (data.mode === 'edit' ? 'Guardar cambios' : 'Publicar') }}</button></div>
+      </form>
+    }
+    @case ('meetup') {
+      <form class="dialog-form" [formGroup]="meetupForm" (ngSubmit)="submitMeetup()">
+        <p class="form-intro">Mantengan el acuerdo dentro del chat y elijan un lugar público y concurrido, de día.</p>
+        <mat-form-field appearance="outline"><mat-label>Punto público de encuentro</mat-label><input matInput formControlName="place" placeholder="Ej. Parque Reducto · entrada principal" />@if (meetupForm.controls.place.invalid && meetupForm.controls.place.touched) { <mat-error>Escribe un punto de encuentro concreto.</mat-error> }</mat-form-field>
+        <div class="form-row"><mat-form-field appearance="outline"><mat-label>Fecha</mat-label><input matInput type="date" [min]="today" formControlName="date" />@if (meetupForm.controls.date.invalid && meetupForm.controls.date.touched) { <mat-error>Elige una fecha.</mat-error> }</mat-form-field><mat-form-field appearance="outline"><mat-label>Hora</mat-label><input matInput type="time" formControlName="time" />@if (meetupForm.controls.time.invalid && meetupForm.controls.time.touched) { <mat-error>Elige una hora.</mat-error> }</mat-form-field></div>
+        <div class="dialog-actions"><button mat-button type="button" mat-dialog-close>Volver al chat</button><button mat-flat-button color="primary" type="submit">Proponer encuentro</button></div>
+      </form>
+    }
+    @case ('rating') {
+      <section class="dialog-form rating-form"><p>Calificas como {{ data.ratingRole === 'owner' ? 'quien publica' : 'quien propone' }}. Tu calificación quedará guardada.</p><fieldset><legend>¿Cómo fue el intercambio?</legend><div class="stars">@for (star of [1,2,3,4,5]; track star) { <button type="button" [attr.aria-label]="star + ' de 5 estrellas'" [attr.aria-pressed]="rating === star" [class.is-selected]="rating >= star" (click)="setRating(star)"><span aria-hidden="true">{{ rating >= star ? '★' : '☆' }}</span></button> }</div></fieldset><mat-form-field appearance="outline"><mat-label>{{ ratingNeedsReview ? 'Cuéntanos qué salió mal' : 'Deja un comentario (opcional)' }}</mat-label><textarea matInput rows="3" maxlength="1000" [value]="ratingReview" (input)="ratingReview = $any($event.target).value" placeholder="Describe cómo fue coordinar y revisar el artículo."></textarea>@if (ratingNeedsReview) { <mat-hint align="end">Mínimo 30 caracteres ({{ ratingReview.trim().length }}/30)</mat-hint> }</mat-form-field><div class="dialog-actions"><button mat-button mat-dialog-close>Después</button><button mat-flat-button color="primary" [disabled]="!canSubmitRating" (click)="submitRating()">Enviar calificación</button></div></section>
+    }
+    @case ('report') {
+      <form class="dialog-form" [formGroup]="reportForm" (ngSubmit)="submitReport()"><p class="form-intro">Indica qué te preocupa. El equipo de moderación revisará el motivo y los detalles que indiques.</p><mat-form-field appearance="outline"><mat-label>Motivo</mat-label><mat-select formControlName="reason"><mat-option value="condition">El estado no coincide con la descripción</mat-option><mat-option value="wrong-category">Categoría o información incorrecta</mat-option><mat-option value="suspicious">Actividad que parece sospechosa</mat-option><mat-option value="other">Otro motivo</mat-option></mat-select>@if (reportForm.controls.reason.invalid && reportForm.controls.reason.touched) { <mat-error>Selecciona un motivo para continuar.</mat-error> }</mat-form-field><mat-form-field appearance="outline"><mat-label>Detalles (opcional)</mat-label><textarea matInput rows="3" formControlName="details"></textarea></mat-form-field><app-evidence-attachments (attachmentsChange)="reportAttachments = $event" /><div class="dialog-actions"><button mat-button type="button" mat-dialog-close>Cancelar</button><button mat-flat-button color="primary" type="submit">Enviar reporte</button></div></form>
+    }
+  }
+</mat-dialog-content>
+

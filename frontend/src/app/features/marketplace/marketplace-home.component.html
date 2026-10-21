@@ -1,0 +1,182 @@
+<div class="mt-page" id="inicio">
+  <a class="skip-link" href="#contenido-principal">Saltar al contenido</a>
+
+  <header class="mt-header">
+    <div class="mt-header__inner">
+      <app-brand-mark />
+      <label class="mt-header-search" id="tour-search"><mat-icon fontSet="material-icons-outlined" aria-hidden="true">search</mat-icon><input type="search" [formControl]="searchControl" (keydown.enter)="openSearchResults()" placeholder="Buscar publicaciones…" aria-label="Buscar objeto, descripción o servicio" /></label>
+      <button
+        class="district-switch"
+        id="tour-district"
+        type="button"
+        (click)="openDistrictPicker()"
+        aria-haspopup="dialog"
+        [attr.aria-expanded]="districtPickerOpen()"
+        [attr.aria-label]="'Seleccionar zona. Actualmente: ' + selectedDistrictLabel()"
+      >
+        <span class="district-switch__icon"><mat-icon fontSet="material-icons-outlined" aria-hidden="true">location_on</mat-icon></span>
+        <span class="district-switch__copy"><small>Mostrar publicaciones de</small><strong>{{ selectedDistrictLabel() }}</strong></span>
+        <mat-icon class="district-switch__chevron" fontSet="material-icons-outlined" aria-hidden="true">expand_more</mat-icon>
+      </button>
+      <nav class="mt-nav" aria-label="Navegación principal">
+        <a routerLink="/explorar" routerLinkActive="is-current" [routerLinkActiveOptions]="{ exact: true }" ariaCurrentWhenActive="page">Explorar</a>
+        
+        <a routerLink="/como-funciona" routerLinkActive="is-current" ariaCurrentWhenActive="page">C&#243;mo funciona</a>
+      </nav>
+      <div class="mt-header__actions">
+        
+        <button class="mt-header-icon mt-theme-toggle" type="button" (click)="toggleTheme()" [attr.aria-label]="darkMode() ? 'Activar modo claro' : 'Activar modo nocturno'" [title]="darkMode() ? 'Activar modo claro' : 'Activar modo nocturno'"><mat-icon fontSet="material-icons-outlined" aria-hidden="true">{{ darkMode() ? 'light_mode' : 'dark_mode' }}</mat-icon></button>
+        @if (currentUser()) { <a class="mt-messages-link" routerLink="/mensajes" aria-label="Mensajes" title="Mensajes"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>@if (unreadMessages.total(); as count) { <span class="mt-unread-badge" aria-hidden="true">{{ count > 99 ? '99+' : count }}</span> }</a> }
+        @if (currentUser(); as user) {
+          <button class="mt-account-avatar" type="button" cdkOverlayOrigin #accountOrigin="cdkOverlayOrigin" [attr.aria-expanded]="accountMenuOpen()" aria-haspopup="menu" [attr.aria-label]="'Abrir opciones de cuenta de ' + user.name" (click)="toggleAccountMenu()">
+            @if (user.imageUrl && user.imageUrl !== failedAvatarUrl()) {
+              <img [src]="user.imageUrl" alt="" width="42" height="42" referrerpolicy="no-referrer" (error)="failedAvatarUrl.set(user.imageUrl)" />
+            } @else {
+              <span aria-hidden="true">{{ avatarInitials(user.name) }}</span>
+            }
+          </button>
+          <ng-template cdkConnectedOverlay [cdkConnectedOverlayOrigin]="accountOrigin" [cdkConnectedOverlayOpen]="accountMenuOpen()" [cdkConnectedOverlayPositions]="accountMenuPositions" [cdkConnectedOverlayHasBackdrop]="true" cdkConnectedOverlayBackdropClass="cdk-overlay-transparent-backdrop" (backdropClick)="closeAccountMenu()">
+            <section class="account-popover" role="menu" aria-label="Opciones de cuenta">
+              <div class="account-popover__profile">
+                @if (user.imageUrl && user.imageUrl !== failedAvatarUrl()) { <img [src]="user.imageUrl" alt="" /> }
+                @else { <span class="account-popover__initials">{{ avatarInitials(user.name) }}</span> }
+                <div><strong>{{ user.name }}</strong><small>Tu cuenta de MonkeyTrueque</small></div>
+              </div>
+              <div class="account-popover__links">
+                <button type="button" role="menuitem" (click)="closeAccountMenu(); openAccountSettings()"><mat-icon fontSet="material-icons-outlined">manage_accounts</mat-icon><span>Mi cuenta</span></button>
+                <a role="menuitem" routerLink="/cuenta" [queryParams]="{ tab: 'listings' }" (click)="closeAccountMenu()"><mat-icon fontSet="material-icons-outlined">person</mat-icon><span>Mi perfil</span></a>
+                <a role="menuitem" routerLink="/me-gusta" (click)="closeAccountMenu()"><mat-icon fontSet="material-icons-outlined">favorite</mat-icon><span>Me gusta</span></a>
+                <a role="menuitem" routerLink="/mensajes" (click)="closeAccountMenu()"><mat-icon fontSet="material-icons-outlined">chat</mat-icon><span>Mensajes</span></a>
+                <button type="button" role="menuitem" (click)="closeAccountMenu(); openPublish()"><mat-icon fontSet="material-icons-outlined">add_circle_outline</mat-icon><span>Publicar algo</span></button>
+              </div>
+              <button class="account-popover__logout" type="button" role="menuitem" (click)="closeAccountMenu(); signOut()"><mat-icon fontSet="material-icons-outlined">logout</mat-icon><span>Cerrar sesión</span></button>
+            </section>
+          </ng-template>
+        } @else if (authStatus() !== 'loading') { <button class="mt-login" type="button" (click)="openLogin()">Ingresar</button> } @else { <span class="mt-auth-placeholder" aria-hidden="true"></span> }
+        <button class="mt-menu-toggle" type="button" [attr.aria-expanded]="showMobileMenu()" aria-controls="mobile-navigation" [attr.aria-label]="showMobileMenu() ? 'Cerrar navegación' : 'Abrir navegación'" (click)="toggleMobileMenu()"><mat-icon fontSet="material-icons-outlined" aria-hidden="true">{{ showMobileMenu() ? 'close' : 'menu' }}</mat-icon></button>
+      </div>
+    </div>
+    @if (showMobileMenu()) {
+      <nav class="mobile-nav" id="mobile-navigation" aria-label="Navegación móvil">
+        <a href="#publicaciones" (click)="showMobileMenu.set(false)">Explorar</a><a routerLink="/como-funciona" (click)="showMobileMenu.set(false)">C&#243;mo funciona</a>
+        @if (currentUser(); as user) { <span>{{ user.name }}</span><a routerLink="/mensajes" (click)="showMobileMenu.set(false)">Mensajes</a><a routerLink="/cuenta" (click)="showMobileMenu.set(false)">Mi cuenta</a><a routerLink="/me-gusta" (click)="showMobileMenu.set(false)">Me gusta</a><button type="button" (click)="openPublish()">Publicar algo</button><button class="logout-mobile-button" type="button" (click)="signOut()">Cerrar sesión</button> } @else if (authStatus() !== 'loading') { <button type="button" (click)="openLogin()">Ingresar</button> }
+      </nav>
+    }
+  </header>
+
+  <main class="mt-shell mt-main" id="contenido-principal">
+    <section class="district-hero" aria-labelledby="district-question">
+      <div class="district-hero__copy">
+        <h1 id="district-question">Dale otra vida a lo que ya no usas.</h1>
+        <p>Intercambia objetos y servicios con personas de tu zona. Lo que tienes puede ser justo lo que alguien necesita.</p>
+        <div class="district-hero__actions">
+          <button class="mt-publish" id="tour-publish" type="button" (click)="openPublish()">Publicar un producto <mat-icon fontSet="material-icons-outlined" aria-hidden="true">add</mat-icon></button>
+          <a class="mt-publish" routerLink="/explorar">Explorar publicaciones <mat-icon fontSet="material-icons-outlined" aria-hidden="true">arrow_forward</mat-icon></a>
+          <span class="demo-note"><mat-icon fontSet="material-icons-outlined" aria-hidden="true">info</mat-icon>Perfiles y cifras de muestra</span>
+        </div>
+      </div>
+      <figure class="district-hero__visual">
+        <img class="district-hero__scene" src="/brand/monkeytrueque-mascot.png" alt="Mono de cuerpo completo con corona, bolso de objetos de trueque y una moneda." width="1254" height="1254" fetchpriority="high" />
+      </figure>
+    </section>
+
+    <section class="listings-section" id="publicaciones" aria-labelledby="offers-heading">
+      <div class="section-heading"><div><h2 id="offers-heading">{{ selectedDistrictId() === 'all' ? 'Todas las publicaciones' : 'Publicaciones cerca de ' + selectedDistrictLabel() }}</h2><p>{{ selectedDistrictId() === 'all' ? 'Explora productos y servicios de todos los distritos' : 'Por fecha de publicación · distrito aproximado' }}</p></div><span class="section-heading__count">{{ visibleCount() }} {{ visibleCount() === 1 ? 'resultado' : 'resultados' }}</span></div>
+
+      <nav class="listing-mode-tabs" id="tour-filters" aria-label="Filtrar por modalidad">
+        <button type="button" [class.is-active]="modeFilter() === 'all'" [attr.aria-pressed]="modeFilter() === 'all'" (click)="setModeFilter('all')"><mat-icon fontSet="material-icons-outlined">apps</mat-icon>Todo</button>
+        <button type="button" [class.is-active]="modeFilter() === 'sale'" [attr.aria-pressed]="modeFilter() === 'sale'" (click)="toggleModeFilter('sale')"><mat-icon fontSet="material-icons-outlined">sell</mat-icon>Venta</button>
+        <button type="button" [class.is-active]="modeFilter() === 'trade'" [attr.aria-pressed]="modeFilter() === 'trade'" (click)="toggleModeFilter('trade')"><mat-icon fontSet="material-icons-outlined">swap_horiz</mat-icon>Trueque</button>
+        <button type="button" [class.is-active]="modeFilter() === 'gift'" [attr.aria-pressed]="modeFilter() === 'gift'" (click)="toggleModeFilter('gift')"><mat-icon fontSet="material-icons-outlined">redeem</mat-icon>Regalo</button>
+      </nav>
+      <form class="listing-filters" aria-label="Filtros anteriores" (submit)="$event.preventDefault()">
+        
+        <div class="filter-category"><span class="filter-label">Categoría</span><mat-form-field appearance="outline"><mat-select [value]="filters().category" aria-label="Filtrar por categoría" (selectionChange)="selectCategory($event.value)"><mat-option value="all">Todas</mat-option><mat-option value="electronics">Electrónica</mat-option><mat-option value="clothing">Ropa y accesorios</mat-option><mat-option value="home">Hogar y muebles</mat-option><mat-option value="beauty">Belleza y cuidado personal</mat-option><mat-option value="babies">Bebés y niños</mat-option><mat-option value="sports">Deportes y aire libre</mat-option><mat-option value="toys">Juguetes, hobbies y coleccionables</mat-option><mat-option value="books">Libros, música y películas</mat-option><mat-option value="food">Alimentos y bebidas</mat-option><mat-option value="other">Otros</mat-option><mat-option value="school">Útiles escolares</mat-option><mat-option value="mobility">Movilidad</mat-option><mat-option value="decor">Decoración</mat-option><mat-option value="services">Servicios</mat-option></mat-select></mat-form-field></div>
+        <div class="filter-kind"><span class="filter-label">Se ofrece</span><mat-form-field appearance="outline"><mat-select [value]="filters().kind" aria-label="Filtrar por tipo de publicación" (selectionChange)="selectListingKind($event.value)"><mat-option value="all">Objeto o servicio</mat-option><mat-option value="object">Un objeto</mat-option><mat-option value="service">Un servicio</mat-option></mat-select></mat-form-field></div>
+        <fieldset class="accept-filter"><legend class="filter-label">Acepta a cambio</legend><div class="accept-toggle"><button type="button" [attr.aria-pressed]="filters().accepts === 'object'" (click)="selectAcceptedKind(filters().accepts === 'object' ? 'all' : 'object')">Objeto</button><button type="button" [attr.aria-pressed]="filters().accepts === 'service'" (click)="selectAcceptedKind(filters().accepts === 'service' ? 'all' : 'service')">Servicio</button></div></fieldset>
+        @if (filters().query || filters().category !== 'all' || filters().kind !== 'all' || filters().accepts !== 'all') { <button class="text-link filter-reset" type="button" (click)="clearFilters()"><mat-icon fontSet="material-icons-outlined" aria-hidden="true">close</mat-icon>Limpiar filtros</button> }
+      </form>
+
+      <div class="listing-grid" aria-live="polite" aria-atomic="false">
+        @for (listing of homeListings(); track listing.id) {
+          <app-listing-card [listing]="listing" [districtName]="districtName(listing.districtId)" (detailsRequested)="openListing($event)" (proposalRequested)="openProposal($event)" (reportRequested)="openReport($event)" />
+        } @empty {
+          <div class="empty-state"><mat-icon fontSet="material-icons-outlined" aria-hidden="true">search_off</mat-icon>@if (allListings().length) { <h3>No hay publicaciones que coincidan</h3><p>Prueba otra categoría, cambia lo que acepta a cambio o busca en un distrito cercano.</p><button class="mt-publish" type="button" (click)="clearFilters()">Limpiar filtros</button> } @else { <h3>Aún no hay publicaciones</h3><p>Sé la primera persona en publicar un producto o servicio en tu zona.</p><button class="mt-publish" type="button" (click)="openPublish()">Publicar un producto</button> }</div>
+        }
+      </div>
+      @if (visibleCount() > homeListings().length) {
+        <div class="listings-more"><a routerLink="/explorar">Mostrar más <mat-icon fontSet="material-icons-outlined" aria-hidden="true">arrow_forward</mat-icon></a></div>
+      }
+    </section>
+
+    
+
+    <section class="guide-promo" aria-labelledby="guide-promo-title">
+      <div class="guide-promo__icon" aria-hidden="true"><mat-icon fontSet="material-icons-outlined">swap_horiz</mat-icon></div>
+      <div class="guide-promo__copy"><span>GUÍA PARA EMPEZAR</span><h2 id="guide-promo-title">¿Cómo funciona MonkeyTrueque?</h2><p>Cómo publicar, encontrar algo que te sirva y coordinar un intercambio.</p></div>
+      <a routerLink="/como-funciona" class="guide-promo__link">Cómo funciona <mat-icon fontSet="material-icons-outlined" aria-hidden="true">arrow_forward</mat-icon></a>
+    </section>
+
+    <section class="community-banner" aria-labelledby="community-banner-title">
+      <div class="community-banner__mascot"><img src="/brand/jorge-curioso.png" alt="Jorge el curioso invita a la comunidad MonkeyTrueque" loading="lazy" /></div>
+      <div class="community-banner__content">
+        <span class="community-banner__eyebrow">Comunidad</span>
+        <h2 id="community-banner-title">Únete a nuestra comunidad</h2>
+        <p>Sigue nuestras redes para enterarte de novedades, ferias y los trueques más buscados de la semana.</p>
+        <nav class="community-banner__links" aria-label="Redes sociales de MonkeyTrueque">
+          <a href="https://www.facebook.com/groups/" target="_blank" rel="noopener noreferrer">Grupo FB</a>
+          <a href="https://www.facebook.com/" target="_blank" rel="noopener noreferrer">Facebook</a>
+          <a href="https://www.instagram.com/" target="_blank" rel="noopener noreferrer">Instagram</a>
+          <a href="https://www.tiktok.com/" target="_blank" rel="noopener noreferrer">TikTok</a>
+        </nav>
+      </div>
+    </section>
+  </main>
+
+  <footer class="mt-footer"><div class="mt-shell mt-footer__inner"><app-brand-mark /><p class="mt-footer__tagline">Intercambia lo que tienes por algo que te sirve. Hecho en Lima.</p><nav class="mt-footer__links" aria-label="Enlaces del pie de página"><a routerLink="/como-funciona" routerLinkActive="is-current" ariaCurrentWhenActive="page">C&#243;mo funciona</a><a href="#publicaciones">Explorar</a></nav></div></footer>
+  @if (tourOpen()) {
+    <div class="tour-shade" [style.top.px]="0" [style.left.px]="0" [style.width.px]="tourRect().viewportWidth" [style.height.px]="tourRect().top"></div>
+    <div class="tour-shade" [style.top.px]="tourRect().bottom" [style.left.px]="0" [style.width.px]="tourRect().viewportWidth" [style.height.px]="tourRect().viewportHeight - tourRect().bottom"></div>
+    <div class="tour-shade" [style.top.px]="tourRect().top" [style.left.px]="0" [style.width.px]="tourRect().left" [style.height.px]="tourRect().height"></div>
+    <div class="tour-shade" [style.top.px]="tourRect().top" [style.left.px]="tourRect().right" [style.width.px]="tourRect().viewportWidth - tourRect().right" [style.height.px]="tourRect().height"></div>
+    <div class="tour-spotlight" [style.top.px]="tourRect().top - 4" [style.left.px]="tourRect().left - 4" [style.width.px]="tourRect().width + 8" [style.height.px]="tourRect().height + 8"></div>
+    <section class="tour-card" role="dialog" aria-modal="true" aria-labelledby="tour-title" [style.left.px]="tourRect().cardLeft" [style.top.px]="tourRect().cardTop">
+      <span class="tour-card__step">PASO {{ tourStep() + 1 }} DE {{ tourSteps.length }}</span>
+      <h2 id="tour-title">{{ currentTourStep().title }}</h2>
+      <p>{{ currentTourStep().description }}</p>
+      <div class="tour-card__progress" aria-hidden="true">@for (step of tourSteps; track step.target; let index = $index) { <span [class.is-current]="index === tourStep()" [class.is-done]="index < tourStep()"></span> }</div>
+      <div class="tour-card__actions"><button class="tour-skip" type="button" (click)="finishTour()">Saltar</button><div><button class="tour-back" type="button" [disabled]="tourStep() === 0" (click)="advanceTour(-1)">Atrás</button><button class="tour-next" type="button" (click)="advanceTour(1)">{{ tourStep() === tourSteps.length - 1 ? 'Terminar' : 'Siguiente' }}</button></div></div>
+    </section>
+  }
+  @if (districtPickerOpen()) {
+    <button class="district-picker-backdrop" type="button" aria-label="Cerrar selector de distrito" (click)="closeDistrictPicker()"></button>
+    <aside class="district-picker" role="dialog" aria-modal="true" aria-labelledby="district-picker-title">
+      <header class="district-picker__header">
+        @if (districtSearchOpen()) {
+          <button class="district-picker__icon-button" type="button" aria-label="Volver" (click)="closeDistrictSearch()"><mat-icon fontSet="material-icons-outlined" aria-hidden="true">arrow_back</mat-icon></button>
+          <input class="district-picker__search-input" type="search" [value]="districtSearch()" (input)="districtSearch.set($any($event.target).value)" placeholder="Buscar..." aria-label="Buscar distrito" autofocus />
+          <button class="district-picker__icon-button" type="button" aria-label="Limpiar búsqueda" (click)="clearDistrictSearch()"><mat-icon fontSet="material-icons-outlined" aria-hidden="true">delete_outline</mat-icon></button>
+        } @else {
+          <button class="district-picker__icon-button" type="button" aria-label="Buscar" (click)="districtSearchOpen.set(true)"><mat-icon fontSet="material-icons-outlined" aria-hidden="true">search</mat-icon></button>
+          <h2 id="district-picker-title">Elige tu distrito</h2>
+          <button class="district-picker__icon-button" type="button" aria-label="Cerrar" (click)="closeDistrictPicker()"><mat-icon fontSet="material-icons-outlined" aria-hidden="true">close</mat-icon></button>
+        }
+      </header>
+      <div class="district-picker__content">
+        <div class="district-picker__intro"><strong>Selecciona tu zona</strong><span>Publicaciones de Lima Metropolitana</span></div>
+        <div class="district-picker__options" role="radiogroup" aria-label="Distritos disponibles">
+          <button class="district-picker__option" type="button" role="radio" [attr.aria-checked]="draftDistrictId() === 'all'" [class.is-selected]="draftDistrictId() === 'all'" (click)="draftDistrictId.set('all')">
+            <span><strong>Todos los distritos</strong><small>Lima, Perú</small></span><mat-icon fontSet="material-icons-outlined" aria-hidden="true">{{ draftDistrictId() === 'all' ? 'radio_button_checked' : 'radio_button_unchecked' }}</mat-icon>
+          </button>
+          @for (district of filteredDistricts(); track district.id) {
+            <button class="district-picker__option" type="button" role="radio" [attr.aria-checked]="draftDistrictId() === district.id" [class.is-selected]="draftDistrictId() === district.id" (click)="draftDistrictId.set(district.id)">
+              <span><strong>{{ district.name }}</strong><small>Lima, Perú</small></span><mat-icon fontSet="material-icons-outlined" aria-hidden="true">{{ draftDistrictId() === district.id ? 'radio_button_checked' : 'radio_button_unchecked' }}</mat-icon>
+            </button>
+          }
+          @if (filteredDistricts().length === 0) { <p class="district-picker__empty">No encontramos ese distrito.</p> }
+        </div>
+      </div>
+      <footer class="district-picker__footer"><span>{{ draftDistrictLabel() }}</span><button type="button" (click)="applyDistrictSelection()">Aplicar</button></footer>
+    </aside>
+  }
+</div>

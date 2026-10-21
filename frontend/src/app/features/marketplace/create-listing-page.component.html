@@ -1,0 +1,50 @@
+<app-marketplace-header />
+
+<main class="publish-page">
+  <a class="back-link" routerLink="/">Volver a explorar</a>
+  <section class="publish-card" aria-labelledby="publish-title">
+    @if (!user()) {
+      <header class="page-heading"><p class="eyebrow">COMUNIDAD MONKEYTRUEQUE</p><h1 id="publish-title">Publica lo que ya no usas</h1></header>
+      <div class="login-notice"><div><strong>Inicia sesión para publicar</strong><p>Tu cuenta identifica tus publicaciones y permite que otras personas se comuniquen contigo.</p></div><button mat-flat-button color="primary" type="button" (click)="signIn()">Ingresar</button></div>
+    } @else {
+      <nav class="mode-switch" aria-label="Modalidad de publicación"><button type="button" [class.is-active]="form.controls.mode.value === 'trade'" (click)="onModeChange('trade')">Trueque</button><button type="button" [class.is-active]="form.controls.mode.value === 'sale'" (click)="onModeChange('sale')">Venta</button><button type="button" [class.is-active]="form.controls.mode.value === 'gift'" (click)="onModeChange('gift')">Regalo</button></nav>
+      <header class="page-heading"><h1 id="publish-title">{{ step === 1 ? 'Cuéntanos qué ofreces' : (isTrade ? '¿Qué quieres a cambio?' : (isSale ? '¿Dónde entregas?' : '¿Dónde lo entregas?')) }}</h1><p class="step-count">Paso {{ step }} de 2</p><div class="step-track" aria-label="Progreso de publicación"><span [class.is-current]="step === 1" [class.is-done]="step > 1">1&nbsp; Qué ofreces</span><i></i><span [class.is-current]="step === 2">{{ isTrade ? '2  Qué aceptas y dónde' : '2  Ubicación' }}</span></div></header>
+
+      <form class="publish-form" [formGroup]="form" (ngSubmit)="step === 1 ? continueToDetails() : submit()">
+        @if (step === 1) {
+          <div class="form-section">
+            <label class="field-caption">¿Qué vas a publicar?</label>
+            <div class="kind-switch"><button type="button" [class.is-active]="form.controls.kind.value === 'object'" (click)="onKindChange('object')">Artículo</button><button type="button" [class.is-active]="form.controls.kind.value === 'service'" (click)="onKindChange('service')">Servicio</button></div>
+            <label class="field-caption">Fotos</label>
+            <div class="photo-upload-grid">
+              @for (photo of photos; track photo.src; let index = $index) { <figure class="listing-photo-preview"><img [src]="photo.src" [alt]="photo.alt" /><button type="button" [attr.aria-label]="'Quitar foto ' + (index + 1)" (click)="removePhoto(index)">×</button></figure> }
+              @if (photos.length < 3) { <label class="upload-field" for="listing-photos"><span class="camera-mark" aria-hidden="true"></span><span>Agregar</span><input id="listing-photos" type="file" accept="image/jpeg,image/png,image/webp" multiple (change)="onPhotoSelected($event)" /></label> }
+            </div>
+            <p class="hint">JPG, PNG o WebP · hasta 10 MB cada una · máximo 3 fotos</p>
+            @if (photoError) { <p class="field-error" role="alert">{{ photoError }}</p> }
+            <mat-form-field appearance="outline"><mat-label>Título del {{ form.controls.kind.value === 'service' ? 'servicio' : 'artículo' }}</mat-label><input matInput formControlName="title" maxlength="70" placeholder="Ej. Bicicleta de montaña" />@if (form.controls.title.invalid && form.controls.title.touched) { <mat-error>Escribe un título de al menos 4 caracteres.</mat-error> }</mat-form-field>
+            <mat-form-field appearance="outline"><mat-label>Categoría</mat-label><mat-select formControlName="category">@for (category of availableCategories; track category.value) { <mat-option [value]="category.value">{{ category.label }}</mat-option> }</mat-select></mat-form-field>
+            <div class="form-row"><mat-form-field appearance="outline"><mat-label>Condición</mat-label><mat-select formControlName="condition"><mat-option value="Buen estado">Buen estado</mat-option><mat-option value="Funciona con marcas de uso">Usado, con marcas de uso</mat-option></mat-select></mat-form-field>@if (isSale || isTrade) { <mat-form-field appearance="outline"><mat-label>{{ isSale ? 'Precio (S/)' : 'Valor referencial (S/)' }}</mat-label><input matInput type="number" min="0.01" step="0.01" formControlName="price" placeholder="0.00" />@if (isTrade) { <mat-hint>Opcional. En Venta, este será el precio.</mat-hint> }@if (form.controls.price.invalid && form.controls.price.touched) { <mat-error>Ingresa un monto mayor que cero.</mat-error> }</mat-form-field> }</div>
+            <mat-form-field appearance="outline"><mat-label>Descripción</mat-label><textarea matInput rows="4" formControlName="description" maxlength="320" placeholder="Estado, marca, medidas y detalles que importan."></textarea><mat-hint align="end">{{ form.controls.description.value.length }}/320</mat-hint>@if (form.controls.description.invalid && form.controls.description.touched) { <mat-error>Describe tu publicación con al menos 12 caracteres.</mat-error> }</mat-form-field>
+          </div>
+        } @else {
+          <div class="form-section">
+            <div class="offer-summary"><img [src]="photos[0].src" [alt]="photos[0].alt" /><div><small>TÚ OFRECES</small><strong>{{ form.controls.title.value }}</strong><span>{{ selectedCategoryLabel }}</span></div></div>
+            @if (isTrade) {
+              <span class="field-caption">¿Qué aceptas a cambio?</span>
+              <div class="accept-options"><button type="button" class="accept-option" [class.is-selected]="form.controls.accepts.value.includes('object')" [attr.aria-pressed]="form.controls.accepts.value.includes('object')" (click)="toggleAcceptedKind('object')"><span class="check-box">{{ form.controls.accepts.value.includes('object') ? '✓' : '' }}</span><span><strong>Artículo</strong><small>Trueque por otro objeto.</small></span></button><button type="button" class="accept-option" [class.is-selected]="form.controls.accepts.value.includes('service')" [attr.aria-pressed]="form.controls.accepts.value.includes('service')" (click)="toggleAcceptedKind('service')"><span class="check-box">{{ form.controls.accepts.value.includes('service') ? '✓' : '' }}</span><span><strong>Servicio</strong><small>Trueque por un servicio.</small></span></button></div>
+              @if (form.controls.accepts.invalid && form.controls.accepts.touched) { <p class="field-error">Elige al menos una opción para el intercambio.</p> }
+              <mat-form-field appearance="outline"><mat-label>¿Qué aceptarías?</mat-label><input matInput formControlName="acceptanceSummary" maxlength="70" placeholder="Ej. libros de diseño o macetas" />@if (form.controls.acceptanceSummary.invalid && form.controls.acceptanceSummary.touched) { <mat-error>Indica qué aceptarías.</mat-error> }</mat-form-field>
+            }
+            <div class="section-divider"></div>
+            <span class="field-caption">¿Dónde se encuentra?</span>
+            <div class="location-row"><label><span>Departamento</span><input value="Lima" disabled /></label><label><span>Provincia</span><input value="Lima" disabled /></label><mat-form-field appearance="outline"><mat-label>Distrito</mat-label><mat-select formControlName="districtId"><mat-option value="" disabled>Selecciona un distrito</mat-option>@for (district of districts; track district.id) { <mat-option [value]="district.id">{{ district.name }}</mat-option> }</mat-select>@if (form.controls.districtId.invalid && form.controls.districtId.touched) { <mat-error>Selecciona el distrito.</mat-error> }</mat-form-field></div>
+            <mat-form-field appearance="outline"><mat-label>Referencia de encuentro (opcional)</mat-label><input matInput formControlName="locationReference" maxlength="160" placeholder="Ej. Rambla Brasil" /><mat-hint>Coordinen el punto exacto por el chat.</mat-hint></mat-form-field>
+            @if (error) { <p class="field-error" role="alert">{{ error }}</p> }
+          </div>
+        }
+        <footer class="form-actions">@if (step === 1) { <a mat-button routerLink="/">Cancelar</a><button mat-flat-button color="primary" type="submit">Continuar</button> } @else { <button mat-button type="button" (click)="backToOffer()">Atrás</button><button mat-flat-button color="primary" type="submit" [disabled]="submitting">{{ submitting ? 'Publicando…' : 'Publicar' }}</button> }</footer>
+      </form>
+    }
+  </section>
+</main>

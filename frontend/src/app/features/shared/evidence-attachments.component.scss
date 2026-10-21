@@ -1,0 +1,21 @@
+:host { display: block; }
+.evidence-upload { display: grid; gap: 10px; border: 1px solid var(--mt-line, #e1dbea); border-radius: 12px; padding: 12px; background: color-mix(in srgb, var(--mt-card, #fff) 72%, var(--mt-page, #f8f6fb)); }
+.evidence-upload__heading { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.evidence-upload__heading > div { display: grid; gap: 4px; }
+.evidence-upload__heading strong { color: var(--mt-ink, #24134b); font-size: 12px; }
+.evidence-upload__heading strong span, .evidence-upload__heading small { color: var(--mt-muted, #756b87); font-weight: 400; }
+.evidence-upload__heading small { font-size: 10px; line-height: 1.45; }
+.evidence-upload__button { position: relative; flex: none; display: inline-flex; min-height: 36px; align-items: center; gap: 6px; border: 1px solid var(--mt-line, #e1dbea); border-radius: 9px; padding: 0 10px; background: var(--mt-card, white); color: var(--mt-ink, #24134b); font-size: 11px; font-weight: 650; cursor: pointer; }
+.evidence-upload__button mat-icon { width: 17px; height: 17px; font-size: 17px; }
+.evidence-upload__button input { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; }
+.evidence-upload__button:focus-within { outline: 3px solid color-mix(in srgb, #8b5cf6 32%, transparent); outline-offset: 2px; }
+.evidence-upload__previews { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+.evidence-upload__previews figure { position: relative; min-width: 0; overflow: hidden; margin: 0; border: 1px solid var(--mt-line, #e1dbea); border-radius: 9px; background: var(--mt-card, white); }
+.evidence-upload__previews img { display: block; width: 100%; height: 92px; object-fit: cover; }
+.evidence-upload__previews figcaption { overflow: hidden; padding: 5px 26px 5px 7px; color: var(--mt-muted, #756b87); font-size: 9px; text-overflow: ellipsis; white-space: nowrap; }
+.evidence-upload__previews button { position: absolute; top: 4px; right: 4px; display: grid; width: 25px; height: 25px; place-items: center; border: 0; border-radius: 50%; background: rgba(25, 18, 34, .82); color: white; cursor: pointer; }
+.evidence-upload__previews button mat-icon { width: 16px; height: 16px; font-size: 16px; }
+.evidence-upload__error { margin: 0; color: #b42318; font-size: 11px; }
+:host-context(html.marketplace-dark) .evidence-upload { background: #1d1824; }
+:host-context(html.marketplace-dark) .evidence-upload__button { background: #241d2d; }
+@media (max-width: 480px) { .evidence-upload__heading { align-items: flex-start; flex-direction: column; } .evidence-upload__previews { grid-template-columns: repeat(2, minmax(0,1fr)); } }

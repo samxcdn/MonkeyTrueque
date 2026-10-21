@@ -1,0 +1,110 @@
+<div class="mt-page product-page">
+  <app-marketplace-header />
+
+  <main class="product-shell">
+    @if (loading()) {
+      <section class="product-state" aria-live="polite"><mat-icon fontSet="material-icons-outlined" aria-hidden="true">hourglass_top</mat-icon><p>Cargando publicación…</p></section>
+    } @else {
+      @if (listing(); as item) {
+      <nav class="product-breadcrumb" aria-label="Ruta de navegación"><a routerLink="/" fragment="publicaciones">Publicaciones</a><mat-icon fontSet="material-icons-outlined" aria-hidden="true">chevron_right</mat-icon><span>{{ item.title }}</span></nav>
+
+      <div class="product-layout">
+        <section class="product-gallery" aria-label="Fotos de la publicación">
+          <div class="product-gallery__main">
+            @if (photoSrc(item)) {
+              <img [src]="photoSrc(item)" [alt]="photoAlt(item)" fetchpriority="high" [style.transform]="magnifier().visible ? 'scale(2)' : null" [style.transform-origin]="magnifier().origin" [style.cursor]="magnifier().visible ? 'zoom-out' : 'zoom-in'" (mousemove)="moveMagnifier($event)" (click)="togglePhotoZoom()" />
+              <button class="product-gallery__zoom" type="button" aria-label="Ampliar foto del producto" (click)="zoomOpen.set(true)"><mat-icon fontSet="material-icons-outlined" aria-hidden="true">open_in_full</mat-icon></button>
+              <button class="product-gallery__favorite" [class.is-liked]="liked()" type="button" [attr.aria-pressed]="liked()" [attr.aria-label]="liked() ? 'Quitar de Me gusta' : 'Añadir a Me gusta'" (click)="toggleLike()"><mat-icon fontSet="material-icons-outlined" aria-hidden="true">{{ liked() ? 'favorite' : 'favorite_border' }}</mat-icon></button>
+              @if (item.photos.length > 1) {
+                <button class="product-gallery__arrow product-gallery__arrow--previous" type="button" aria-label="Foto anterior" (click)="previousPhoto(item); hideMagnifier()"><mat-icon fontSet="material-icons-outlined" aria-hidden="true">chevron_left</mat-icon></button>
+                <button class="product-gallery__arrow product-gallery__arrow--next" type="button" aria-label="Foto siguiente" (click)="nextPhoto(item); hideMagnifier()"><mat-icon fontSet="material-icons-outlined" aria-hidden="true">chevron_right</mat-icon></button>
+              }
+            } @else {
+              <div class="product-gallery__fallback"><mat-icon fontSet="material-icons-outlined" aria-hidden="true">image</mat-icon><span>Sin foto disponible</span></div>
+            }
+            <span class="photo-count">{{ selectedPhoto() + 1 }} / {{ item.photos.length || 1 }}</span>
+          </div>
+          @if (item.photos.length > 1) {
+            <div class="product-gallery__thumbs" aria-label="Elegir foto">
+              @for (photo of item.photos; track photo.src; let index = $index) {
+                <button type="button" [class.is-selected]="selectedPhoto() === index" [attr.aria-label]="'Ver foto ' + (index + 1)" [attr.aria-pressed]="selectedPhoto() === index" (click)="selectPhoto(index)"><img [src]="photo.src" [alt]="photo.alt" loading="lazy" /></button>
+              }
+            </div>
+          }
+          @if (zoomOpen() && photoSrc(item)) {
+            <div class="photo-zoom" role="presentation" (click)="closeZoom()">
+              <section class="photo-zoom__dialog" role="dialog" aria-modal="true" aria-label="Foto ampliada del producto" (click)="$event.stopPropagation()">
+                <button class="photo-zoom__close" type="button" aria-label="Cerrar foto ampliada" (click)="closeZoom()"><mat-icon fontSet="material-icons-outlined" aria-hidden="true">close</mat-icon></button>
+                @if (item.photos.length > 1) { <button class="photo-zoom__arrow photo-zoom__arrow--previous" type="button" aria-label="Foto anterior" (click)="previousPhoto(item)"><mat-icon fontSet="material-icons-outlined" aria-hidden="true">chevron_left</mat-icon></button> }
+                <img class="photo-zoom__image" [src]="photoSrc(item)" [alt]="photoAlt(item)" />
+                @if (item.photos.length > 1) { <button class="photo-zoom__arrow photo-zoom__arrow--next" type="button" aria-label="Foto siguiente" (click)="nextPhoto(item)"><mat-icon fontSet="material-icons-outlined" aria-hidden="true">chevron_right</mat-icon></button> }
+                <span class="photo-zoom__count">{{ selectedPhoto() + 1 }} / {{ item.photos.length }}</span>
+              </section>
+            </div>
+          }
+        </section>
+
+        <aside class="product-card" aria-labelledby="product-title">
+          <h1 id="product-title">{{ item.title }}</h1>
+          @if (item.mode === 'trade' && item.price) { <section class="exchange-offer"><span class="exchange-offer__icon"><mat-icon fontSet="material-icons-outlined" aria-hidden="true">sell</mat-icon></span><div><small>Valor referencial</small><strong>S/ {{ item.price | number:'1.2-2' }}</strong></div></section> }
+          @if (item.mode === 'sale') { <section class="exchange-offer"><span class="exchange-offer__icon"><mat-icon fontSet="material-icons-outlined" aria-hidden="true">sell</mat-icon></span><div><small>Precio</small><strong>S/ {{ item.price | number:'1.2-2' }}</strong></div></section> }
+          <div class="seller-preview">
+            <a class="seller-row" [routerLink]="item.ownerId ? ['/perfil', item.ownerId] : null" [attr.aria-label]="item.ownerId ? 'Ver el perfil de ' + item.ownerName : null" [attr.aria-describedby]="'seller-preview-' + item.ownerId"><span class="seller-avatar" aria-hidden="true">@if (sellerImageUrl()) { <img [src]="sellerImageUrl()" alt="" referrerpolicy="no-referrer" /> } @else { {{ item.ownerName.charAt(0).toUpperCase() }} }</span><span class="seller-info"><span class="seller-name"><strong>{{ item.ownerName }}</strong>@if (sellerProfile()?.identityVerified) { <mat-icon class="seller-verified" aria-label="Cuenta verificada">verified</mat-icon> }</span>@if (sellerReputation(); as reputation) { <span class="seller-rating">@if (reputation.reviewCount > 0) { <span class="seller-rating__star" aria-hidden="true">★</span><strong>{{ reputation.averageRating | number:'1.1-1' }}</strong><span>{{ sellerRatingLabel(reputation.averageRating) }} valoración</span> } @else { <span>Aún sin valoraciones</span> }</span> }</span></a>
+            <section class="seller-preview-card" [id]="'seller-preview-' + item.ownerId" aria-label="Vista previa del perfil del vendedor">
+              <div class="seller-preview-card__header"><span class="seller-preview-card__avatar">@if (sellerImageUrl()) { <img [src]="sellerImageUrl()" alt="" /> } @else { {{ item.ownerName.charAt(0).toUpperCase() }} }</span><span class="seller-preview-card__identity"><strong>{{ item.ownerName }}@if (sellerProfile()?.identityVerified) { <mat-icon aria-label="Cuenta verificada">verified</mat-icon> }</strong><span>Miembro de MonkeyTrueque</span><a class="seller-preview-card__link" [routerLink]="['/perfil', item.ownerId]">Ver perfil ›</a></span></div>
+              <div class="seller-preview-card__stats"><div><small>En MonkeyTrueque</small><strong>{{ sellerMemberDuration() }}</strong></div><div><small>Operaciones completadas</small><strong>{{ sellerReputation()?.completedCount ?? '—' }}</strong></div><div><small>Valoración</small><strong>@if (sellerReputation()?.reviewCount) { <span class="seller-preview-card__star" aria-hidden="true">★</span> {{ sellerReputation()!.averageRating | number:'1.1-1' }} · {{ sellerReputation()!.reviewCount }} {{ sellerReputation()!.reviewCount === 1 ? 'reseña' : 'reseñas' }} } @else if (sellerReputation()) { Aún sin valoraciones } @else { — }</strong></div><div><small>Distrito</small><strong>{{ districtName(item) }}, Lima</strong></div></div>
+            </section>
+          </div>
+
+          <section class="product-description"><h2>Sobre esta publicación</h2><p>{{ item.description }}</p></section>
+
+          @if ((item.mode ?? 'trade') === 'trade') { <section class="exchange-offer" aria-labelledby="exchange-offer-title">
+            <span class="exchange-offer__icon"><mat-icon fontSet="material-icons-outlined" aria-hidden="true">swap_horiz</mat-icon></span>
+            <div class="exchange-offer__content"><small id="exchange-offer-title">Qué busca a cambio</small><strong>{{ item.acceptanceSummary }}</strong><div class="exchange-kinds">@for (kind of item.accepts; track kind) { <span>{{ kind === 'object' ? 'Objetos' : 'Servicios' }}</span> }</div></div>
+          </section>
+          <section class="meetup-info" aria-labelledby="meetup-info-title"><mat-icon fontSet="material-icons-outlined" aria-hidden="true">location_on</mat-icon><div><small id="meetup-info-title">Punto de encuentro</small><span class="meetup-info__label">Zona</span><strong>{{ districtName(item) }}, Lima</strong>@if (item.locationReference) { <span class="meetup-info__label">Referencia</span><strong>{{ item.locationReference }}</strong> }<p>Coordinen el lugar y la hora exactos por chat.</p></div></section> }
+          @if (item.mode === 'gift') { <section class="exchange-offer"><span class="exchange-offer__icon"><mat-icon fontSet="material-icons-outlined" aria-hidden="true">redeem</mat-icon></span><div><small>Modalidad</small><strong>Regalo · gratis</strong></div></section> }
+
+          
+
+          <div class="product-facts"><span><mat-icon fontSet="material-icons-outlined" aria-hidden="true">info</mat-icon>{{ item.condition }}</span><span><mat-icon fontSet="material-icons-outlined" aria-hidden="true">category</mat-icon>{{ kindLabel(item.kind) }}</span><span><mat-icon fontSet="material-icons-outlined" aria-hidden="true">sell</mat-icon>{{ modeLabel(item) }}</span><span><mat-icon fontSet="material-icons-outlined" aria-hidden="true">verified</mat-icon>{{ item.available === false ? 'Intercambiado' : 'Disponible' }}</span></div>
+
+          <div class="product-actions"><button class="mt-publish" type="button" [disabled]="item.available === false || item.moderationHidden || item.ownerId === currentUser()?.id" (click)="contactSeller()">
+            @if (item.ownerId === currentUser()?.id) { Es tu publicación }
+            @else if (item.available === false || item.moderationHidden) { Publicación no disponible }
+            @else { Enviar mensaje <mat-icon fontSet="material-icons-outlined" aria-hidden="true">chat_bubble_outline</mat-icon> }
+          </button><button class="report-button" type="button" (click)="report()"><mat-icon fontSet="material-icons-outlined" aria-hidden="true">flag</mat-icon>Reportar publicación</button></div>
+          <p class="safety-note"><mat-icon fontSet="material-icons-outlined" aria-hidden="true">shield</mat-icon>Conversen por la plataforma y coordinen la entrega en un lugar público.</p>
+        </aside>
+      </div>
+      @if (similarListings().length) {
+        <section class="similar-section" aria-labelledby="similar-heading">
+          <div class="similar-section__heading"><div><span>Para seguir explorando</span><h2 id="similar-heading">Publicaciones similares</h2></div><a routerLink="/" fragment="publicaciones">Ver todas <mat-icon fontSet="material-icons-outlined" aria-hidden="true">arrow_forward</mat-icon></a></div>
+          <div class="listing-grid similar-listing-grid">
+            @for (similar of similarListings(); track similar.id) {
+              <app-listing-card [listing]="similar" [districtName]="districtName(similar)" (detailsRequested)="openSimilar($event)" (reportRequested)="reportListing($event.id)" />
+            }
+          </div>
+        </section>
+      }
+      <section class="community-banner product-community-banner" aria-labelledby="product-community-title">
+        <div class="community-banner__mascot"><img src="/brand/jorge-curioso.png" alt="Jorge el curioso invita a la comunidad MonkeyTrueque" loading="lazy" /></div>
+        <div class="community-banner__content">
+          <span class="community-banner__eyebrow">Comunidad</span>
+          <h2 id="product-community-title">Únete a nuestra comunidad</h2>
+          <p>Sigue nuestras redes para enterarte de novedades, ferias y los trueques más buscados de la semana.</p>
+          <nav class="community-banner__links" aria-label="Redes sociales de MonkeyTrueque">
+            <a href="https://www.facebook.com/groups/" target="_blank" rel="noopener noreferrer">Grupo FB</a>
+            <a href="https://www.facebook.com/" target="_blank" rel="noopener noreferrer">Facebook</a>
+            <a href="https://www.instagram.com/" target="_blank" rel="noopener noreferrer">Instagram</a>
+            <a href="https://www.tiktok.com/" target="_blank" rel="noopener noreferrer">TikTok</a>
+          </nav>
+        </div>
+      </section>
+    } @else {
+      <section class="product-state product-state--error"><mat-icon fontSet="material-icons-outlined" aria-hidden="true">search_off</mat-icon><h1>No encontramos esta publicación</h1><p>{{ loadError() || 'Puede que haya sido retirada o que el enlace esté incompleto.' }}</p><a class="mt-publish" routerLink="/" fragment="publicaciones">Volver a explorar</a></section>
+      }
+    }
+  </main>
+  <footer class="mt-footer"><div class="mt-shell mt-footer__inner"><app-brand-mark /><p class="mt-footer__tagline">Intercambia lo que tienes por algo que te sirve. Hecho en Lima.</p><nav class="mt-footer__links" aria-label="Enlaces del pie de página"><a routerLink="/" fragment="intercambio">Cómo funciona</a><a routerLink="/explorar">Explorar</a></nav></div></footer>
+</div>

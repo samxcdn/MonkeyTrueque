@@ -1,0 +1,3 @@
+ALTER TABLE listings
+  ADD COLUMN listing_mode VARCHAR(16) NOT NULL DEFAULT 'trade',
+  ADD COLUMN sale_price DECIMAL(10,2) NULL;

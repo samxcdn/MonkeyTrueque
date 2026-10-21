@@ -1,0 +1,7 @@
+<section class="evidence-upload" aria-label="Pruebas adjuntas">
+  <div class="evidence-upload__heading"><div><strong>Pruebas en imágenes <span>(opcional)</span></strong><small>Solo el equipo de moderación podrá verlas. JPG, PNG o WebP; hasta 3 imágenes de 1.5 MB cada una.</small></div>
+    <label class="evidence-upload__button"><mat-icon fontSet="material-icons-outlined" aria-hidden="true">add_photo_alternate</mat-icon>Adjuntar<input type="file" accept="image/jpeg,image/png,image/webp" multiple [disabled]="attachments().length >= 3" (change)="readFiles($event)" /></label>
+  </div>
+  @if (attachments().length) { <div class="evidence-upload__previews">@for (attachment of attachments(); track $index; let index = $index) { <figure><img [src]="attachment.data" [alt]="'Vista previa: ' + attachment.fileName" /><figcaption [title]="attachment.fileName">{{ attachment.fileName }}</figcaption><button type="button" (click)="remove(index)" [attr.aria-label]="'Quitar ' + attachment.fileName"><mat-icon fontSet="material-icons-outlined" aria-hidden="true">close</mat-icon></button></figure> }</div> }
+  @if (error()) { <p class="evidence-upload__error" role="alert">{{ error() }}</p> }
+</section>

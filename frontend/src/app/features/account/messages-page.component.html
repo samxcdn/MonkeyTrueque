@@ -1,0 +1,121 @@
+<app-marketplace-header />
+
+<main class="messages-page">
+  <h1>Mensajes</h1>
+  @if (authStatus() === 'loading') {
+    <section class="messages-login"><h2>Comprobando tu sesión</h2><p>Un momento, estamos cargando tus mensajes.</p></section>
+  } @else if (authStatus() === 'error') {
+  } @else if (!user()) {
+    <section class="messages-login"><h2>Inicia sesión para ver tus mensajes</h2><p>Las conversaciones con otras personas aparecerán aquí.</p><button type="button" (click)="signIn()">Ingresar</button></section>
+  } @else {
+    <section class="messages-panel" [class.has-selection]="selectedConversation()" aria-label="Bandeja de mensajes">
+      <aside class="conversation-sidebar" aria-label="Conversaciones">
+        <div class="conversation-controls">
+          <div class="message-tabs" role="tablist" aria-label="Tipo de conversación"><button type="button" role="tab" [attr.aria-selected]="tab() === 'searching'" [class.is-active]="tab() === 'searching'" (click)="tab.set('searching')">Buscando @if (unreadTotal('searching'); as count) { <span class="tab-unread-badge" [attr.aria-label]="count + ' mensajes sin leer'">{{ count > 99 ? '99+' : count }}</span> }</button><button type="button" role="tab" [attr.aria-selected]="tab() === 'offering'" [class.is-active]="tab() === 'offering'" (click)="tab.set('offering')">Ofreciendo @if (unreadTotal('offering'); as count) { <span class="tab-unread-badge" [attr.aria-label]="count + ' mensajes sin leer'">{{ count > 99 ? '99+' : count }}</span> }</button></div>
+          <label class="chat-search"><mat-icon fontSet="material-icons-outlined" aria-hidden="true">search</mat-icon><input type="search" [value]="search()" (input)="search.set($any($event.target).value)" placeholder="Buscar chats…" /></label>
+          <button class="archive-view-toggle" type="button" (click)="toggleArchivedView()"><mat-icon class="archive-view-toggle__icon" fontSet="material-icons-outlined" aria-hidden="true">{{ archivedView() ? 'arrow_back' : 'archive' }}</mat-icon><span>{{ archivedView() ? 'Volver a chats' : 'Archivados' }}</span>@if (!archivedView()) { <span class="archive-view-toggle__count">{{ archivedCount() }}</span> }</button>
+        </div>
+        <div class="conversation-list">
+          @if (loading()) { <p class="sidebar-empty">Cargando conversaciones…</p> }
+          @else if (error() && !conversations().length) { <div class="sidebar-empty" role="alert"><strong>No pudimos cargar los mensajes</strong><p>{{ error() }}</p><button type="button" (click)="load()">Reintentar</button></div> }
+          @else if (visibleConversations().length) {
+            @for (conversation of visibleConversations(); track conversation.id) {
+              <button class="conversation-item" type="button" [class.is-selected]="selectedId() === conversation.id" (click)="selectConversation(conversation)">
+                <span class="conversation-avatar">@if (otherImage(conversation)) { <img [src]="otherImage(conversation)" alt="" referrerpolicy="no-referrer" /> } @else { {{ initials(otherName(conversation)) }} }</span>
+                <span class="conversation-copy"><strong>{{ otherName(conversation) }}</strong><small>{{ conversation.listingTitle }}</small><span class="last-message">{{ isOwnMessage(conversation.messages.at(-1)?.senderId ?? '') ? 'Tú: ' : '' }}{{ lastMessage(conversation) }}</span></span>
+                <span class="conversation-meta"><time>{{ timeLabel(conversation.updatedAt) }}</time>@if (unreadCount(conversation); as count) { <span class="unread-badge" [attr.aria-label]="count + ' mensajes sin leer'">{{ count > 99 ? '99+' : count }}</span> }@if (agreementFor(conversation); as deal) { <small class="exchange-status">{{ agreementStatus(deal.status) }}</small> } @else { <small>{{ modeLabel(conversation.listingMode) }}</small> }</span>
+              </button>
+            }
+          } @else { <div class="sidebar-empty"><strong>Aún no tienes chats</strong><p>Las conversaciones que inicies desde una publicación aparecerán aquí.</p><a routerLink="/explorar">Explorar publicaciones</a></div> }
+        </div>
+      </aside>
+
+      @if (selectedConversation(); as conversation) {
+        <section class="chat-view" aria-label="Conversación">
+          <header class="chat-header"><button class="mobile-back" type="button" (click)="backToList()" aria-label="Volver a la lista de conversaciones"><mat-icon fontSet="material-icons-outlined">arrow_back</mat-icon></button><span class="chat-avatar">@if (otherImage(conversation)) { <img [src]="otherImage(conversation)" alt="" referrerpolicy="no-referrer" /> } @else { {{ initials(otherName(conversation)) }} }</span><div class="chat-title"><strong>{{ otherName(conversation) }}</strong><a [routerLink]="['/producto', conversation.listingId]"><img [src]="conversation.listingPhotoUrl" alt="" />{{ conversation.listingTitle }}</a></div><button class="chat-actions-trigger" type="button" [matMenuTriggerFor]="chatActions" aria-label="Acciones de conversación"><mat-icon fontSet="material-icons-outlined">expand_more</mat-icon></button><mat-menu #chatActions="matMenu" panelClass="chat-actions-menu"><a mat-menu-item [routerLink]="['/producto', conversation.listingId]"><mat-icon fontSet="material-icons-outlined">visibility</mat-icon><span>Ver publicación</span></a><button mat-menu-item type="button" (click)="toggleArchive(conversation)"><mat-icon fontSet="material-icons-outlined">{{ isArchived(conversation) ? 'unarchive' : 'archive' }}</mat-icon><span>{{ isArchived(conversation) ? 'Desarchivar' : 'Archivar' }}</span></button><button mat-menu-item type="button" (click)="reportUser(conversation)"><mat-icon fontSet="material-icons-outlined">outlined_flag</mat-icon><span>Reportar usuario</span></button><button mat-menu-item type="button" class="danger-menu-item" (click)="blockUser(conversation)"><mat-icon fontSet="material-icons-outlined">block</mat-icon><span>Bloquear usuario</span></button></mat-menu></header>
+          @if (agreement(); as deal) {
+            <div class="exchange-offer-summary"><mat-icon fontSet="material-icons-outlined" aria-hidden="true">{{ conversation.listingMode === 'trade' ? 'swap_horiz' : conversation.listingMode === 'sale' ? 'sell' : 'redeem' }}</mat-icon><span><small>{{ conversation.listingMode === 'trade' ? 'Propuesta de trueque' : 'Solicitud' }}</small><strong>{{ deal.offeredTitle }}</strong></span><span class="exchange-status">{{ agreementStatus(deal.status) }}</span></div>
+            @if (deal.meetupPlace && deal.status !== 'rejected' && deal.status !== 'cancelled') { <p class="exchange-meetup-summary"><mat-icon fontSet="material-icons-outlined" aria-hidden="true">location_on</mat-icon>{{ deal.meetupPlace }} · {{ meetupDateLabel(deal.meetupDate) }} · {{ deal.meetupTime }}</p> }
+          }
+          <div class="message-history" aria-live="polite">
+            <p class="day-divider">{{ firstMessageDate(conversation) | date:'mediumDate' }}</p>
+            @for (message of conversation.messages; track message.id) {
+              <article class="message-row" [class.is-own]="isOwnMessage(message.senderId)"><p>{{ message.text }}</p><time>{{ timeLabel(message.createdAt) }}</time>@if (!isOwnMessage(message.senderId)) { <button class="report-message-action" type="button" (click)="reportMessage(conversation, message)" aria-label="Reportar este mensaje" title="Reportar mensaje"><mat-icon fontSet="material-icons-outlined">flag</mat-icon></button> }</article>
+            }
+          </div>
+          <div class="exchange-chat-actions" aria-live="polite">
+            @if (conversation.status !== 'active') {
+              <p class="agreement-hint">Esta conversación está cerrada: la publicación ya se entregó a otra persona.</p>
+            } @else {
+            @if (agreement(); as deal) {
+              @switch (deal.status) {
+                @case ('proposal-sent') {
+                  @if (isOwner(conversation)) {
+                    <p class="agreement-hint">{{ otherName(conversation) }} te envió esta propuesta.@if (deal.note) { Nota: «{{ deal.note }}» }</p>
+                    <button type="button" [disabled]="sending()" (click)="acceptProposal(deal)"><mat-icon fontSet="material-icons-outlined" aria-hidden="true">check</mat-icon>Aceptar</button>
+                    <button type="button" class="is-secondary" [disabled]="sending()" (click)="rejectProposal(deal)"><mat-icon fontSet="material-icons-outlined" aria-hidden="true">close</mat-icon>Rechazar</button>
+                  } @else {
+                    <p class="agreement-hint">Esperando que {{ otherName(conversation) }} responda tu propuesta.</p>
+                    <button type="button" class="is-secondary" [disabled]="sending()" (click)="cancelAgreement(deal)"><mat-icon fontSet="material-icons-outlined" aria-hidden="true">undo</mat-icon>Retirar propuesta</button>
+                  }
+                }
+                @case ('accepted') {
+                  <p class="agreement-hint">Propuesta aceptada. Ahora propongan un lugar público, una fecha y una hora para el encuentro.</p>
+                  <button type="button" [disabled]="sending()" (click)="proposeMeetup(deal)"><mat-icon fontSet="material-icons-outlined" aria-hidden="true">event</mat-icon>Proponer encuentro</button>
+                }
+                @case ('meetup-proposed') {
+                  @if (proposedMeetupMyself(deal)) {
+                    <p class="agreement-hint">Propusiste este encuentro. Falta que {{ otherName(conversation) }} lo acepte.</p>
+                    <button type="button" class="is-secondary" [disabled]="sending()" (click)="proposeMeetup(deal)"><mat-icon fontSet="material-icons-outlined" aria-hidden="true">edit_calendar</mat-icon>Cambiar propuesta</button>
+                  } @else {
+                    <p class="agreement-hint">{{ otherName(conversation) }} propone este encuentro. ¿Te queda bien?</p>
+                    <button type="button" [disabled]="sending()" (click)="acceptMeetup(deal)"><mat-icon fontSet="material-icons-outlined" aria-hidden="true">check</mat-icon>Aceptar encuentro</button>
+                    <button type="button" class="is-secondary" [disabled]="sending()" (click)="proposeMeetup(deal)"><mat-icon fontSet="material-icons-outlined" aria-hidden="true">edit_calendar</mat-icon>Proponer otro</button>
+                  }
+                }
+                @case ('meetup-agreed') {
+                  @if (canConfirmToday(deal)) {
+                    <p class="agreement-hint">Cuando hayan hecho la entrega, confírmala. La publicación se cierra cuando ambos confirmen.</p>
+                    <button type="button" [disabled]="sending()" (click)="confirmDelivery(deal)"><mat-icon fontSet="material-icons-outlined" aria-hidden="true">task_alt</mat-icon>Confirmar entrega</button>
+                  } @else {
+                    <p class="agreement-hint">Podrás confirmar la entrega desde el {{ meetupDateLabel(deal.meetupDate) }}.</p>
+                  }
+                  <button type="button" class="is-secondary" [disabled]="sending()" (click)="proposeMeetup(deal)"><mat-icon fontSet="material-icons-outlined" aria-hidden="true">edit_calendar</mat-icon>Cambiar encuentro</button>
+                }
+                @case ('confirmed-by-one') {
+                  @if (hasConfirmed(deal)) {
+                    <p class="agreement-hint">Confirmaste la entrega. Falta que {{ otherName(conversation) }} la confirme; después ambos podrán calificarse.</p>
+                  } @else {
+                    <p class="agreement-hint">{{ otherName(conversation) }} confirmó la entrega. Confírmala solo si ya recibiste o entregaste lo acordado.</p>
+                    <button type="button" [disabled]="sending()" (click)="confirmDelivery(deal)"><mat-icon fontSet="material-icons-outlined" aria-hidden="true">task_alt</mat-icon>Confirmar entrega</button>
+                  }
+                }
+                @case ('confirmed-by-both') {
+                  <p class="agreement-hint">¡Entrega confirmada por ambas partes! Cada persona puede calificar una vez.</p>
+                  <button type="button" [disabled]="sending() || !!deal.ratings[ownRole(deal)]" (click)="rateExchange(deal)"><mat-icon fontSet="material-icons-outlined" aria-hidden="true">star</mat-icon>{{ deal.ratings[ownRole(deal)] ? 'Ya calificaste' : 'Calificar' }}</button>
+                }
+                @case ('rated') { <p class="agreement-hint">Operación finalizada. Ambos dejaron su calificación.</p> }
+                @default {
+                  <p class="agreement-hint">{{ agreementStatus(deal.status) }}.@if (!isOwner(conversation)) { Si siguen conversando, puedes enviar una nueva propuesta. }</p>
+                  @if (!isOwner(conversation)) { <button type="button" [disabled]="sending()" (click)="startAgreement(conversation)"><mat-icon fontSet="material-icons-outlined" aria-hidden="true">handshake</mat-icon>{{ startLabel(conversation) }}</button> }
+                }
+              }
+              @if (isCancellable(deal)) { <button type="button" class="is-secondary is-danger" [disabled]="sending()" (click)="cancelAgreement(deal)"><mat-icon fontSet="material-icons-outlined" aria-hidden="true">block</mat-icon>Cancelar acuerdo</button> }
+            } @else if (isOwner(conversation)) {
+              <p class="agreement-hint">Cuando {{ otherName(conversation) }} te envíe una propuesta, podrás aceptarla o rechazarla aquí.</p>
+            } @else {
+              <p class="agreement-hint">Cuando estés listo, envía tu propuesta. Quien publicó podrá aceptarla o rechazarla.</p>
+              <button type="button" [disabled]="sending()" (click)="startAgreement(conversation)"><mat-icon fontSet="material-icons-outlined" aria-hidden="true">handshake</mat-icon>{{ startLabel(conversation) }}</button>
+            }
+            }
+          </div>
+          @if (error()) { <p class="chat-error" role="alert">{{ error() }}</p> }
+          <p class="chat-safety-note"><mat-icon fontSet="material-icons-outlined" aria-hidden="true">shield</mat-icon>Mantén el trato por la plataforma y acuerda la entrega en un lugar público. No compartas contraseñas ni códigos.</p>
+          @if (conversation.status === 'active') { <form class="message-composer" (ngSubmit)="send()"><input type="text" maxlength="400" [value]="draft()" (input)="draft.set($any($event.target).value)" placeholder="Escribe un mensaje…" aria-label="Escribe un mensaje" /><button type="submit" [disabled]="sending() || !draft().trim()">{{ sending() ? 'Enviando…' : 'Enviar' }}</button></form> }
+        </section>
+      } @else {
+        <section class="chat-placeholder"><h2>Elige una conversación</h2><p>Selecciona un chat de la lista para ver los mensajes y responder.</p></section>
+      }
+    </section>
+  }
+</main>

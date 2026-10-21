@@ -1,0 +1,19 @@
+<article class="listing-card" [attr.aria-labelledby]="'listing-title-' + listing().id">
+  <button class="listing-card__photo" type="button" [attr.aria-label]="'Ver detalles de ' + listing().title" (click)="detailsRequested.emit(listing())">
+    <img [src]="listing().photos[0].src" [alt]="listing().photos[0].alt" loading="lazy" decoding="async" />
+    <span class="listing-card__type-badge" [class.listing-card__type-badge--sale]="listing().mode === 'sale'" [class.listing-card__type-badge--gift]="listing().mode === 'gift'"><mat-icon fontSet="material-icons-outlined" aria-hidden="true">{{ modeIcon() }}</mat-icon>{{ modeLabel() }}</span>
+  </button>
+  <button class="listing-card__like" type="button" [class.is-liked]="liked()" [attr.aria-pressed]="liked()" [attr.aria-label]="(liked() ? 'Quitar de Me gusta: ' : 'Me gusta: ') + listing().title" (click)="toggleLike()">
+    <mat-icon fontSet="material-icons-outlined" aria-hidden="true">{{ liked() ? 'favorite' : 'favorite_border' }}</mat-icon>
+  </button>
+  <div class="listing-card__body">
+    <span class="listing-card__category"><mat-icon fontSet="material-icons-outlined" aria-hidden="true">category</mat-icon>{{ categoryLabel(listing().category) }}</span>
+    <h3 [id]="'listing-title-' + listing().id"><a [routerLink]="['/producto', listing().id]">{{ listing().title }}</a></h3>
+    @if (layout() === 'list') {
+      <p class="listing-card__description">{{ listing().description }}</p>
+      @if (listing().mode === 'sale' && listing().price != null) { <strong class="listing-card__price">S/ {{ listing().price | number:'1.2-2' }}</strong> }
+      @if (listing().mode === 'trade' && listing().price != null) { <span class="listing-card__price-hint">Valor referencial: S/ {{ listing().price | number:'1.2-2' }}</span> }
+    }
+    <p class="listing-card__location"><mat-icon fontSet="material-icons-outlined" aria-hidden="true">location_on</mat-icon>{{ districtName() }}, Lima</p>
+  </div>
+</article>

@@ -1,0 +1,92 @@
+<div class="account-page">
+  <app-marketplace-header />
+
+  <main class="account-shell">
+    @if (authStatus() === 'loading') {
+      <section class="account-state"><p>Cargando tu cuenta…</p></section>
+    } @else if (!user()) {
+      <section class="account-state">
+        <mat-icon fontSet="material-icons-outlined" aria-hidden="true">person</mat-icon>
+        <h1>Inicia sesión para ver tu cuenta</h1>
+        <p>Aquí encontrarás tus publicaciones y las conversaciones de tus intercambios.</p>
+        <button class="primary-action" type="button" (click)="signIn()">Iniciar sesi�n</button>
+      </section>
+
+    } @else {
+      @if (user(); as currentUser) {
+      <section class="profile-card" aria-labelledby="account-title">
+        <div class="profile-avatar">
+          @if (currentUser.imageUrl && currentUser.imageUrl !== failedAvatarUrl()) {
+            <img [src]="currentUser.imageUrl" alt="" width="96" height="96" referrerpolicy="no-referrer" (error)="failedAvatarUrl.set(currentUser.imageUrl)" />
+          } @else { <span aria-hidden="true">{{ avatarInitials(currentUser.name) }}</span> }
+        </div>
+        <div class="profile-copy"><span>Mi cuenta</span><h1 id="account-title">{{ currentUser.name }}</h1>
+          @if (profile()?.description) { <p class="account-profile-description">{{ profile()?.description }}</p> }
+          @if (memberSinceLabel() || profileDistrictName()) { <div class="account-profile-meta">
+            @if (memberSinceLabel()) { <span>Miembro desde {{ memberSinceLabel() }}</span> }
+            @if (profileDistrictName()) { <span><mat-icon fontSet="material-icons-outlined" aria-hidden="true">location_on</mat-icon>{{ profileDistrictName() }} · Lima · Lima</span> }
+          </div> }
+          @if (communityNames().length) { <div class="account-community-tags" aria-label="Mis comunidades">@for (name of communityNames(); track name) { <span>{{ name }}</span> }</div> }
+          @if (activeSanctions().length) { <div class="account-restriction-callout"><span><mat-icon fontSet="material-icons-outlined" aria-hidden="true">error_outline</mat-icon>Cuenta restringida</span><a routerLink="/cuenta/restricciones">Ver detalles y solicitar revisión</a></div> }
+        </div>
+        <div class="profile-actions"><button type="button" (click)="editProfile()"><mat-icon fontSet="material-icons-outlined" aria-hidden="true">manage_accounts</mat-icon>Editar datos de perfil</button><button type="button" routerLink="/mensajes"><mat-icon fontSet="material-icons-outlined" aria-hidden="true">chat_bubble_outline</mat-icon>Mis mensajes</button><button class="logout-action" type="button" (click)="signOut()"><mat-icon fontSet="material-icons-outlined" aria-hidden="true">logout</mat-icon>Cerrar sesión</button></div>
+        <div class="account-history-entry"><a routerLink="/cuenta/restricciones">Consultar medidas y respuestas a mis apelaciones <span aria-hidden="true">→</span></a></div>
+      </section>
+
+      <section class="profile-reputation" aria-label="Resumen de calificaciones">
+        <div class="reputation-metrics">
+          <article class="reputation-metric"><strong><span class="reputation-star" aria-hidden="true">☆</span>{{ reputation() ? averageRating() : '—' }}</strong><span>{{ reputationLoadFailed() ? 'No disponible' : reviewCount() + (reviewCount() === 1 ? ' calificación' : ' calificaciones') }}</span></article>
+          <article class="reputation-metric"><strong>{{ reputation() ? completedCount() : '—' }}</strong><span>Operaciones completadas</span><small>Como vendedor y comprador</small></article>
+        </div>
+        @if (reputationLoadFailed()) {
+          <p class="reputation-error" role="alert">No pudimos cargar tus calificaciones. <button type="button" (click)="loadReputation()">Reintentar</button></p>
+        } @else if (!reputationLoading() && reputation()) {
+        <div class="rating-distribution" aria-label="Distribución de calificaciones">
+          @for (star of [5, 4, 3, 2, 1]; track star) {
+            <div class="rating-row"><span>{{ star }} <span class="rating-row__star" aria-hidden="true">☆</span></span><div class="rating-bar" role="progressbar" [attr.aria-label]="star + ' estrellas'" [attr.aria-valuenow]="ratingCount(star)" [attr.aria-valuemax]="reviewCount()"><span [style.width.%]="ratingPercentage(star)"></span></div><span>{{ ratingCount(star) }}</span></div>
+          }
+        </div>
+        } @else if (reputationLoading()) { <p class="reputation-loading" aria-live="polite">Cargando calificaciones…</p> }
+      </section>
+
+      @if (blockedAccounts().length) {
+        <section class="blocked-accounts" aria-labelledby="blocked-accounts-title">
+          <div><h2 id="blocked-accounts-title">Usuarios bloqueados</h2><p>Estas personas no pueden enviarte mensajes.</p></div>
+          <ul>@for (account of blockedAccounts(); track account.id) { <li><span>{{ account.name }}</span><button type="button" [disabled]="unblockingUserId() === account.id" (click)="unblockUser(account)">{{ unblockingUserId() === account.id ? 'Desbloqueando…' : 'Desbloquear' }}</button></li> }</ul>
+        </section>
+      }
+
+      <div class="activity-tabs" role="tablist" aria-label="Actividad del perfil">
+        <button type="button" role="tab" [attr.aria-selected]="tab() === 'listings'" (click)="tab.set('listings')">Activas ({{ activeListings().length }})</button>
+        <button type="button" role="tab" [attr.aria-selected]="tab() === 'traded'" (click)="tab.set('traded')">Operaciones ({{ tradedListings().length }})</button>
+        <button type="button" role="tab" [attr.aria-selected]="tab() === 'reviews'" (click)="tab.set('reviews')">Reseñas ({{ receivedReviews().length }})</button>
+      </div>
+
+      @if (error()) { <div class="activity-error"><span>{{ error() }}</span><button type="button" (click)="loadActivity()">Reintentar</button></div> }
+      @if (loading()) { <p class="activity-empty">Cargando tu actividad…</p> }
+      @else if (tab() === 'listings' || tab() === 'traded') {
+        @if (!tabListings().length) { <div class="activity-empty"><mat-icon fontSet="material-icons-outlined" aria-hidden="true">search</mat-icon><p>{{ tab() === 'listings' ? 'Sin publicaciones activas.' : 'Aún no tienes operaciones completadas.' }}</p>@if (tab() === 'listings') { <button type="button" (click)="openPublish()">Crear mi primera publicación</button> }</div> }
+        @else { <div class="profile-listings">@for (listing of tabListings(); track listing.id) { <div class="profile-listing-wrap"><app-listing-card [listing]="listing" [districtName]="districtName(listing.districtId)" (detailsRequested)="openListing($event)" /><div class="profile-listing-actions"><span>{{ listingStatus(listing) }}</span>@if (tab() === 'listings') { <button type="button" [disabled]="!listing.available || listing.moderationHidden || deletingListingId() === listing.id" (click)="editListing(listing)">Editar</button><button type="button" class="is-danger" [disabled]="deletingListingId() === listing.id" (click)="deleteListing(listing)">{{ deletingListingId() === listing.id ? 'Eliminando…' : 'Eliminar' }}</button> }</div></div> }</div> }
+      } @else if (tab() === 'reviews') {
+        @if (!receivedReviews().length) { <div class="activity-empty"><mat-icon fontSet="material-icons-outlined" aria-hidden="true">star_outline</mat-icon><p>Aún no tienes reseñas. Aparecerán después de completar un intercambio.</p></div> }
+        @else { <div class="activity-list">@for (review of receivedReviews(); track review.exchangeId) { <article class="review-item"><strong>{{ '★'.repeat(review.rating) }} <span>{{ review.rating }}/5</span></strong><p>{{ review.moderated ? 'Comentario retirado por moderación.' : review.review || 'Sin comentario escrito.' }}</p>@if (!review.moderated) { <button type="button" class="report-review-action" (click)="reportReview(review)">Reportar reseña</button> }</article> }</div> }
+      }
+      }
+    }
+  </main>
+  <section class="community-banner account-community-banner" aria-labelledby="account-community-title">
+    <div class="community-banner__mascot"><img src="/brand/jorge-curioso.png" alt="Jorge el curioso invita a la comunidad MonkeyTrueque" loading="lazy" /></div>
+    <div class="community-banner__content">
+      <span class="community-banner__eyebrow">Comunidad</span>
+      <h2 id="account-community-title">Únete a nuestra comunidad</h2>
+      <p>Sigue nuestras redes para enterarte de novedades, ferias y los trueques más buscados de la semana.</p>
+      <nav class="community-banner__links" aria-label="Redes sociales de MonkeyTrueque">
+        <a href="https://www.facebook.com/groups/" target="_blank" rel="noopener noreferrer">Grupo FB</a>
+        <a href="https://www.facebook.com/" target="_blank" rel="noopener noreferrer">Facebook</a>
+        <a href="https://www.instagram.com/" target="_blank" rel="noopener noreferrer">Instagram</a>
+        <a href="https://www.tiktok.com/" target="_blank" rel="noopener noreferrer">TikTok</a>
+      </nav>
+    </div>
+  </section>
+  <footer class="mt-footer"><div class="mt-shell mt-footer__inner"><app-brand-mark /><p class="mt-footer__tagline">Intercambia lo que tienes por algo que te sirve. Hecho en Lima.</p><nav class="mt-footer__links" aria-label="Enlaces del pie de página"><a routerLink="/" fragment="intercambio">Cómo funciona</a><a routerLink="/explorar">Explorar</a></nav></div></footer>
+</div>

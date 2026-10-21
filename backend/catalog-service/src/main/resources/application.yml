@@ -1,0 +1,55 @@
+spring:
+  config:
+    import: optional:file:.env[.properties]
+  application:
+    name: catalog-service
+  rabbitmq:
+    host: ${RABBITMQ_HOST:localhost}
+    port: ${RABBITMQ_PORT:5672}
+    username: ${RABBITMQ_USER:guest}
+    password: ${RABBITMQ_PASSWORD:guest}
+    listener:
+      simple:
+        default-requeue-rejected: false
+        retry:
+          enabled: true
+          max-attempts: 5
+          initial-interval: 1s
+  datasource:
+    url: ${CATALOG_DB_URL:jdbc:mysql://localhost:3306/monkey_catalog?createDatabaseIfNotExist=true}
+    username: ${MYSQL_USER:monkeytrueque}
+    password: ${MYSQL_PASSWORD:monkeytrueque_local}
+  jpa:
+    hibernate:
+      ddl-auto: validate
+  mvc:
+    problemdetails:
+      # Devuelve el motivo de cada ResponseStatusException en "detail" para que la web lo muestre.
+      enabled: true
+server:
+  port: ${SERVER_PORT:8081}
+  error:
+    include-message: never
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,prometheus
+app:
+  cors-origin: ${CORS_ORIGIN:http://localhost:4200}
+  jwt-secret: ${APP_JWT_SECRET:bW9ua2V5dHJ1ZXF1ZS1sb2NhbC1kZXYtaG1hYy1rZXktMzItYnl0ZXM=}
+  # Minutos que dura la sesión. Para mostrar el vencimiento en una demo, usa 1 o 2.
+  jwt-expiration-minutes: ${APP_JWT_EXPIRATION_MINUTES:60}
+  # true cuando la web se sirva por HTTPS (la cookie solo viajará cifrada).
+  session-cookie-secure: ${SESSION_COOKIE_SECURE:false}
+  demo-admin:
+    enabled: ${DEMO_ADMIN_ENABLED:false}
+    username: ${DEMO_ADMIN_USERNAME:admin}
+    password: ${DEMO_ADMIN_PASSWORD:}
+  demo-data:
+    enabled: ${DEMO_DATA_ENABLED:false}
+  exchange-url: ${EXCHANGE_URL:http://localhost:8082}
+cloudinary:
+  cloud-name: ${CLOUDINARY_CLOUD_NAME:}
+  api-key: ${CLOUDINARY_API_KEY:}
+  api-secret: ${CLOUDINARY_API_SECRET:}

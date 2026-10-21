@@ -1,0 +1,29 @@
+<header class="report-heading">
+  <h2 mat-dialog-title>{{ data.title || 'Reportar usuario' }}</h2>
+  <button class="report-close" mat-icon-button mat-dialog-close aria-label="Cerrar"><mat-icon fontSet="material-icons-outlined" aria-hidden="true">close</mat-icon></button>
+</header>
+<mat-dialog-content>
+  <form [formGroup]="form" (ngSubmit)="submit()">
+    <p class="report-question">{{ data.prompt || '¿Por qué reportas a' }} <strong>{{ data.name }}</strong>?</p>
+    <label class="field-label" for="report-reason">Motivo</label>
+    <mat-form-field appearance="outline" class="reason-field">
+      <mat-select id="report-reason" formControlName="reason" placeholder="Selecciona un motivo">
+        <mat-option value="inappropriate">Contenido inapropiado</mat-option>
+        <mat-option value="scam">Intento de estafa</mat-option>
+        <mat-option value="harassment">Acoso o spam</mat-option>
+        <mat-option value="false-listing">Publicación falsa</mat-option>
+        <mat-option value="other">Otro</mat-option>
+      </mat-select>
+      @if (form.controls.reason.invalid && form.controls.reason.touched) { <mat-error>Selecciona un motivo.</mat-error> }
+    </mat-form-field>
+    <label class="field-label" for="report-details">Detalle adicional (opcional)</label>
+    <mat-form-field appearance="outline" class="details-field">
+      <textarea id="report-details" matInput rows="4" maxlength="700" formControlName="details" placeholder="Cuéntanos qué pasó"></textarea>
+    </mat-form-field>
+    <app-evidence-attachments (attachmentsChange)="attachments = $event" />
+  </form>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button class="report-cancel" mat-button mat-dialog-close>Cancelar</button>
+  <button class="report-submit" mat-flat-button type="button" [disabled]="form.invalid" (click)="submit()">Enviar</button>
+</mat-dialog-actions>
