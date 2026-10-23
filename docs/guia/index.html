@@ -1,0 +1,1223 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MonkeyTrueque · Guía del equipo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+/* Layout: índice lateral fijo + columna de lectura; en móvil el índice pasa arriba. */
+:root {
+  --paper: #F3F6F2;
+  --surface: #FFFFFF;
+  --ink: #17221C;
+  --muted: #55645A;
+  --line: #D4DDD5;
+  --jungle: #1D6B47;
+  --jungle-soft: #E0EEE5;
+  --banana: #C9971A;
+  --banana-soft: #FBF1D3;
+  --code-bg: #1B2620;
+  --code-ink: #E3EDE6;
+  --code-key: #F0C450;
+  --code-com: #8FA898;
+  --display: "Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
+  --body: "Atkinson Hyperlegible", "Segoe UI", system-ui, sans-serif;
+  --mono: "JetBrains Mono", Consolas, "Courier New", monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    color-scheme: dark;
+    --paper: #111814; --surface: #18221C; --ink: #E5ECE7; --muted: #9AABA0; --line: #2C3A32;
+    --jungle: #5FC795; --jungle-soft: #1C3428; --banana: #F0C450; --banana-soft: #3A3119;
+    --code-bg: #0B110E;
+  }
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+body { margin: 0; background: var(--paper); color: var(--ink); font-family: var(--body); font-size: 1.04rem; line-height: 1.65; }
+.layout { display: grid; grid-template-columns: 270px minmax(0, 1fr); max-width: 1240px; margin: 0 auto; }
+nav.toc { position: sticky; top: 0; align-self: start; height: 100vh; overflow-y: auto; padding: 28px 18px 40px 20px; border-right: 1px solid var(--line); font-size: 0.92rem; }
+nav.toc .brand { font-family: var(--display); font-weight: 800; font-size: 1.25rem; margin-bottom: 4px; }
+nav.toc .brand small { display: block; font-family: var(--mono); font-weight: 400; font-size: 0.7rem; color: var(--muted); letter-spacing: .06em; text-transform: uppercase; }
+nav.toc ol { list-style: none; margin: 18px 0 0; padding: 0; display: grid; gap: 2px; }
+nav.toc a { display: block; padding: 5px 8px; border-radius: 6px; color: var(--muted); text-decoration: none; }
+nav.toc a:hover, nav.toc a:focus-visible { background: var(--jungle-soft); color: var(--ink); outline: none; }
+nav.toc .num { font-family: var(--mono); font-size: .75rem; color: var(--jungle); margin-right: 6px; }
+main { padding: 40px max(16px, 4vw) 100px; min-width: 0; }
+.read { max-width: 74ch; }
+h1, h2, h3, h4 { font-family: var(--display); line-height: 1.15; text-wrap: balance; }
+h1 { font-size: clamp(2.2rem, 5vw, 3.3rem); font-weight: 800; margin: 0 0 12px; letter-spacing: -.02em; }
+h2 { font-size: clamp(1.6rem, 3.4vw, 2.15rem); font-weight: 800; margin: 0 0 6px; padding-top: 16px; }
+h3 { font-size: 1.28rem; font-weight: 600; margin: 34px 0 8px; }
+h4 { font-size: 1.05rem; font-weight: 600; margin: 22px 0 6px; }
+p { margin: 0 0 12px; }
+section.chapter { padding-top: 40px; margin-top: 40px; border-top: 1px solid var(--line); }
+.eyebrow { font-family: var(--mono); font-size: .75rem; letter-spacing: .08em; text-transform: uppercase; color: var(--jungle); }
+.lead { font-size: 1.18rem; color: var(--muted); }
+a { color: var(--jungle); }
+code { font-family: var(--mono); font-size: .86em; background: var(--jungle-soft); padding: 1px 5px; border-radius: 4px; }
+pre { background: var(--code-bg); color: var(--code-ink); font-family: var(--mono); font-size: .84rem; line-height: 1.55; padding: 16px 18px; border-radius: 10px; overflow-x: auto; margin: 10px 0 16px; }
+pre code { background: none; padding: 0; color: inherit; font-size: inherit; }
+pre .c { color: var(--code-com); font-style: italic; }
+pre .k { color: var(--code-key); }
+.table-wrap { overflow-x: auto; margin: 10px 0 18px; }
+table { border-collapse: collapse; width: 100%; font-size: .95rem; }
+th, td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--line); vertical-align: top; }
+th { font-family: var(--mono); font-size: .72rem; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); font-weight: 600; }
+td code { white-space: nowrap; }
+.two { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 14px; margin: 12px 0 18px; }
+.box { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px; }
+.box h4 { margin-top: 0; }
+.box.sin { border-top: 3px solid var(--banana); }
+.box.con { border-top: 3px solid var(--jungle); }
+.tag { font-family: var(--mono); font-size: .7rem; text-transform: uppercase; letter-spacing: .06em; padding: 2px 7px; border-radius: 999px; background: var(--jungle-soft); color: var(--jungle); }
+.tag.alta { background: var(--banana-soft); color: var(--banana); }
+.say { background: var(--banana-soft); border-radius: 10px; padding: 12px 16px; margin: 12px 0 18px; }
+.say b { font-family: var(--display); }
+.file { font-family: var(--mono); font-weight: 600; font-size: .95rem; }
+ul, ol.steps { padding-left: 22px; margin: 0 0 14px; }
+li { margin-bottom: 4px; }
+figure { margin: 14px 0 22px; }
+figure img { width: 100%; border: 1px solid var(--line); border-radius: 10px; display: block; }
+figcaption { font-size: .95rem; color: var(--muted); margin-top: 10px; display: flex; flex-wrap: wrap; align-items: center; gap: 10px 14px; }
+.btn-diagrama { display: inline-flex; align-items: center; gap: 8px; padding: 12px 22px; border-radius: 999px; background: var(--jungle); color: var(--paper); font-family: var(--display); font-weight: 600; font-size: 1.08rem; text-decoration: none; box-shadow: 0 2px 0 rgba(0,0,0,.15); transition: transform .12s ease, filter .12s ease; }
+.btn-diagrama:hover { filter: brightness(1.1); transform: translateY(-1px); }
+.btn-diagrama:focus-visible { outline: 3px solid var(--banana); outline-offset: 3px; }
+@media (prefers-reduced-motion: reduce) { .btn-diagrama { transition: none; } .btn-diagrama:hover { transform: none; } }
+details { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; margin-bottom: 8px; }
+summary { cursor: pointer; padding: 12px 16px; font-weight: 700; }
+summary:focus-visible { outline: 2px solid var(--jungle); outline-offset: 2px; }
+details > div { padding: 0 16px 12px; }
+.tree { font-family: var(--mono); font-size: .82rem; }
+@media (max-width: 860px) {
+  .layout { grid-template-columns: minmax(0, 1fr); }
+  nav.toc { position: static; height: auto; border-right: 0; border-bottom: 1px solid var(--line); padding: 20px 16px; }
+  nav.toc ol { grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); }
+}
+</style>
+</head>
+<body>
+<div class="layout">
+
+<nav class="toc" aria-label="Contenido">
+  <div class="brand">MonkeyTrueque<small>Guía del equipo</small></div>
+  <ol>
+    <li><a href="#inicio"><span class="num">00</span>Qué es y cómo leer esto</a></li>
+    <li><a href="#arrancar"><span class="num">01</span>Cómo arrancarlo</a></li>
+    <li><a href="#diagramas"><span class="num">02</span>Diagramas</a></li>
+    <li><a href="#raiz"><span class="num">03</span>Carpeta raíz</a></li>
+    <li><a href="#backend"><span class="num">04</span>Carpeta backend</a></li>
+    <li><a href="#catalogo"><span class="num">05</span>catalog-service</a></li>
+    <li><a href="#intercambios"><span class="num">06</span>exchange-service</a></li>
+    <li><a href="#basedatos"><span class="num">07</span>Base de datos y Flyway</a></li>
+    <li><a href="#seguridad"><span class="num">08</span>Seguridad</a></li>
+    <li><a href="#comunicacion"><span class="num">09</span>Comunicación y RabbitMQ</a></li>
+    <li><a href="#frontend"><span class="num">10</span>Carpeta frontend</a></li>
+    <li><a href="#http"><span class="num">11</span>Códigos HTTP</a></li>
+    <li><a href="#anotaciones"><span class="num">12</span>Anotaciones de Spring</a></li>
+    <li><a href="#pruebas"><span class="num">13</span>Pruebas</a></li>
+    <li><a href="#glosario"><span class="num">14</span>Glosario</a></li>
+    <li><a href="#preguntas"><span class="num">15</span>Preguntas</a></li>
+  </ol>
+</nav>
+
+<main>
+
+<!-- ============================================================ 00 -->
+<section id="inicio">
+  <span class="eyebrow">Desarrollo de Aplicaciones Web 2 · Ing. Antonio Valdivia</span>
+  <h1>MonkeyTrueque, carpeta por carpeta</h1>
+  <div class="read">
+    <p class="lead">Esta guía explica todo el proyecto para que cualquiera del equipo pueda arrancarlo, entenderlo y defenderlo en la presentación. Cada parte tiene una explicación <b>sin código</b> y otra <b>con código</b>.</p>
+
+    <h3>¿Qué es MonkeyTrueque?</h3>
+    <p>Es una página web de Lima donde la gente publica cosas que ya no usa. Otra persona puede <b>cambiarlas por algo</b> (trueque), <b>comprarlas</b> (venta en soles) o <b>recibirlas gratis</b> (regalo). Todo el trato se hace dentro de un chat, paso a paso: propuesta, encuentro, entrega y calificación.</p>
+
+    <h3>¿Quiénes la usan?</h3>
+    <div class="table-wrap"><table>
+      <thead><tr><th>Persona</th><th>Qué puede hacer</th></tr></thead>
+      <tbody>
+        <tr><td>Visitante</td><td>Ver publicaciones sin cuenta.</td></tr>
+        <tr><td>Usuario</td><td>Publicar, chatear, proponer tratos, calificar y reportar.</td></tr>
+        <tr><td>Moderador</td><td>Revisar reportes y sancionar a usuarios normales.</td></tr>
+        <tr><td>Administrador</td><td>Todo lo del moderador, y además gestionar el equipo. Registrarse <b>nunca</b> da este rol.</td></tr>
+      </tbody>
+    </table></div>
+
+    <h3>Las piezas, en una frase cada una</h3>
+    <ul>
+      <li><b>frontend</b> (Angular, puerto 4200): las pantallas que ves.</li>
+      <li><b>catalog-service</b> (Spring Boot, puerto 8081): cuentas, publicaciones y moderación.</li>
+      <li><b>exchange-service</b> (Spring Boot, puerto 8082): chat, tratos y calificaciones.</li>
+      <li><b>MySQL</b>: dos bases de datos, <code>monkey_catalog</code> y <code>monkey_exchange</code>.</li>
+      <li><b>RabbitMQ</b>: lleva un aviso de intercambios a catálogo cuando un trueque termina.</li>
+      <li><b>Cloudinary</b>: guarda las fotos en internet.</li>
+    </ul>
+
+    <h3>Mapa del proyecto</h3>
+    <pre class="tree"><code>MonkeyTrueque/
+├── README.md                 guía rápida para arrancar
+├── Iniciar-MySQL.sql         crea las 2 bases y el usuario de MySQL
+├── .gitignore                qué NO se sube a GitHub
+├── docs/guia/                ESTA guía y los diagramas
+├── backend/
+│   ├── .env                  claves y configuración local
+│   ├── README.md · DEMO_PRESENTACION.md
+│   ├── catalog-service/      microservicio 1 (puerto 8081)
+│   │   ├── pom.xml           dependencias (Maven)
+│   │   ├── mvnw · mvnw.cmd   Maven incluido, no hay que instalarlo
+│   │   ├── iniciar.cmd       arranca el servicio
+│   │   └── src/
+│   │       ├── main/java/…   el código Java
+│   │       ├── main/resources/application.yml       configuración
+│   │       ├── main/resources/db/migration/V*.sql   Flyway
+│   │       └── test/java/…   pruebas automáticas
+│   └── exchange-service/     microservicio 2 (puerto 8082), misma estructura
+└── frontend/
+    ├── package.json · angular.json · tsconfig*.json
+    ├── public/               imágenes y mapa de distritos
+    └── src/
+        ├── index.html · main.ts · styles.scss
+        └── app/
+            ├── app.config.ts · app.routes.ts · app.component.*
+            ├── core/         sesión, llamadas a la API y modelos
+            └── features/     las pantallas (cuenta, admin, login, marketplace)</code></pre>
+
+    <div class="say"><b>Cómo estudiar esta guía:</b> primero lee las secciones 00 a 02 (qué es, cómo arrancarlo y los diagramas). Luego la 07 (base de datos), la 08 (seguridad) y la 09 (comunicación). Las secciones de carpetas (03 a 06 y 10) úsalas como diccionario cuando abras un archivo.</div>
+  </div>
+</section>
+
+<!-- ============================================================ 01 -->
+<section class="chapter" id="arrancar">
+  <span class="eyebrow">01</span>
+  <h2>Cómo arrancarlo</h2>
+  <div class="read">
+    <h3>Qué instalar (una sola vez)</h3>
+    <div class="table-wrap"><table>
+      <thead><tr><th>Programa</th><th>Versión</th><th>Para qué</th></tr></thead>
+      <tbody>
+        <tr><td>Java (JDK)</td><td><b>21</b> (con 17 no compila)</td><td>Ejecutar los dos servicios de Spring Boot</td></tr>
+        <tr><td>Node.js</td><td>18 o superior</td><td>Ejecutar Angular</td></tr>
+        <tr><td>MySQL Server</td><td>8.x</td><td>Las bases de datos</td></tr>
+        <tr><td>Erlang/OTP</td><td>26.2.5 (instalar antes que RabbitMQ)</td><td>RabbitMQ está hecho en Erlang</td></tr>
+        <tr><td>RabbitMQ Server</td><td>4.0.9</td><td>Los avisos entre servicios</td></tr>
+      </tbody>
+    </table></div>
+    <p>Comprueba Java con <code>java -version</code>. Debe decir 21.</p>
+
+    <h3>Paso 1 · Preparar MySQL (una sola vez)</h3>
+    <p>Abre MySQL Workbench (o la consola de MySQL) como <code>root</code> y ejecuta el archivo <span class="file">Iniciar-MySQL.sql</span> de la raíz. Crea las dos bases y el usuario que usa la aplicación:</p>
+<pre><code><span class="k">CREATE DATABASE IF NOT EXISTS</span> monkey_catalog  CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+<span class="k">CREATE DATABASE IF NOT EXISTS</span> monkey_exchange CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+<span class="k">CREATE USER IF NOT EXISTS</span> 'monkeytrueque'@'localhost' IDENTIFIED BY 'monkeytrueque_local';
+<span class="k">GRANT ALL PRIVILEGES ON</span> monkey_catalog.*  TO 'monkeytrueque'@'localhost';
+<span class="k">GRANT ALL PRIVILEGES ON</span> monkey_exchange.* TO 'monkeytrueque'@'localhost';</code></pre>
+    <p>Las <b>tablas no se crean a mano</b>: las crea Flyway solo, al arrancar cada servicio (sección 07).</p>
+
+    <h3>Paso 2 · Verificar servicios de Windows</h3>
+    <p>Tecla Windows → escribe "Servicios". <code>MySQL80</code> y <code>RabbitMQ</code> deben estar <b>En ejecución</b>.</p>
+
+    <h3>Paso 3 · Arrancar todo con un solo comando</h3>
+    <p>En la carpeta raíz del proyecto hay un archivo <span class="file">iniciar-todo.cmd</span>. Haz <b>doble clic</b> en él, o escribe <code>iniciar-todo.cmd</code> en una terminal ubicada en esa carpeta. Abre <b>3 ventanas</b>, una por cada parte. Si es la primera vez, también ejecuta <code>npm install</code>. Para apagar una parte, cierra su ventana.</p>
+    <h3>O, si prefieres, abre las tres terminales a mano</h3>
+<pre><code><span class="c">:: Terminal 1 · catálogo (8081)</span>
+cd %USERPROFILE%\Downloads\MonkeyTrueque\backend\catalog-service
+iniciar.cmd
+
+<span class="c">:: Terminal 2 · intercambios (8082)</span>
+cd %USERPROFILE%\Downloads\MonkeyTrueque\backend\exchange-service
+iniciar.cmd
+
+<span class="c">:: Terminal 3 · web (4200)</span>
+cd %USERPROFILE%\Downloads\MonkeyTrueque\frontend
+npm install      <span class="c">:: solo la primera vez</span>
+npm start</code></pre>
+    <p>En <b>PowerShell</b> (la consola muestra <code>PS</code> al inicio) se escribe <code>.\iniciar.cmd</code>, con <code>.\</code> delante. La primera vez tarda varios minutos porque descarga dependencias. Cada servicio está listo cuando aparece <code>Started CatalogServiceApplication</code> o <code>Started ExchangeServiceApplication</code>.</p>
+
+    <h3>Paso 4 · Probar</h3>
+    <ul>
+      <li><a href="http://localhost:8081/actuator/health">localhost:8081/actuator/health</a> y <a href="http://localhost:8082/actuator/health">localhost:8082/actuator/health</a> deben mostrar <code>{"status":"UP"}</code>.</li>
+      <li>Abre <a href="http://localhost:4200">localhost:4200</a>. Administrador: usuario <code>admin</code>, contraseña <code>Admin123*</code>.</li>
+      <li>Para probar el chat se necesitan dos cuentas: abre una ventana de incógnito y regístrate con otra.</li>
+    </ul>
+
+    <h3>Errores típicos</h3>
+    <div class="table-wrap"><table>
+      <thead><tr><th>Ves esto</th><th>Significa</th><th>Solución</th></tr></thead>
+      <tbody>
+        <tr><td><code>ERR_CONNECTION_REFUSED</code> en 8081 o 8082</td><td>Ese servicio no está corriendo o se cerró</td><td>Mira la terminal de ese servicio y busca la línea <code>ERROR</code> o <code>APPLICATION FAILED TO START</code>.</td></tr>
+        <tr><td><code>release version 21 not supported</code></td><td>Estás usando Java 17</td><td>Instala Java 21 y ajusta <code>JAVA_HOME</code>.</td></tr>
+        <tr><td><code>Access denied for user 'monkeytrueque'</code></td><td>No se ejecutó <code>Iniciar-MySQL.sql</code></td><td>Ejecútalo como <code>root</code>.</td></tr>
+        <tr><td><code>Port 8082 was already in use</code></td><td>Otro programa usa el puerto</td><td>Cierra la otra terminal o reinicia la PC.</td></tr>
+        <tr><td><code>Connection refused</code> con el puerto 5672</td><td>RabbitMQ apagado</td><td>Inicia el servicio <code>RabbitMQ</code> (y revisa que Erlang esté instalado).</td></tr>
+        <tr><td><code>Validate failed: Migrations have failed</code></td><td>Una base quedó a medias</td><td>Bórrala (<code>DROP DATABASE monkey_exchange;</code>) y vuelve a arrancar el servicio.</td></tr>
+        <tr><td>Puedes entrar, pero el chat no funciona</td><td>Solo está caído el 8082</td><td>Inicia exchange-service. Login y publicaciones dependen solo del 8081.</td></tr>
+      </tbody>
+    </table></div>
+  </div>
+</section>
+
+<!-- ============================================================ 02 -->
+<section class="chapter" id="diagramas">
+  <span class="eyebrow">02</span>
+  <h2>Diagramas</h2>
+  <div class="read">
+    <p>Cada imagen tiene una versión interactiva en la carpeta <span class="file">docs/guia/diagramas/</span>. Ábrela en el navegador: puedes hacer zoom, buscar y usar "Play story" para recorrer el diagrama paso a paso. Los botones del visor están en inglés porque la herramienta (Archify) solo trae ese idioma.</p>
+  </div>
+  <figure><a href="diagramas/arquitectura.html" title="Abrir versión interactiva"><img src="imagenes/arquitectura.png" alt="Arquitectura: el usuario usa la web Angular, que llama a catalog-service y exchange-service; cada servicio tiene su base MySQL; exchange-service consulta a catálogo por Feign y le avisa por RabbitMQ; catálogo sube fotos a Cloudinary."></a><figcaption>Arquitectura completa. <a class="btn-diagrama" href="diagramas/arquitectura.html"><span aria-hidden="true">▶</span> Abrir versión interactiva</a></figcaption></figure>
+  <figure><a href="diagramas/flujo-trueque.html" title="Abrir versión interactiva"><img src="imagenes/flujo-trueque.png" alt="Flujo del trueque: escribe, propone, acepta, encuentro, confirman y califican; al confirmar se guarda un aviso en el outbox que viaja por RabbitMQ; si el dueño no acepta, se rechaza."></a><figcaption>El trueque paso a paso. <a class="btn-diagrama" href="diagramas/flujo-trueque.html"><span aria-hidden="true">▶</span> Abrir versión interactiva</a></figcaption></figure>
+  <figure><a href="diagramas/estados-acuerdo.html" title="Abrir versión interactiva"><img src="imagenes/estados-acuerdo.png" alt="Estados del acuerdo: proposal-sent, accepted, meetup-proposed, meetup-agreed, confirmed-by-one, confirmed-by-both y rated; salidas rejected y cancelled."></a><figcaption>Los estados de la columna <code>status</code> de la tabla <code>exchanges</code>. <a class="btn-diagrama" href="diagramas/estados-acuerdo.html"><span aria-hidden="true">▶</span> Abrir versión interactiva</a></figcaption></figure>
+  <figure><a href="diagramas/login.html" title="Abrir versión interactiva"><img src="imagenes/login.png" alt="Secuencia del login: la web envía usuario y clave a AuthController, que lee el hash de MySQL, lo compara con BCrypt, firma un JWT y lo devuelve en la cookie mt_session."></a><figcaption>Inicio de sesión. <a class="btn-diagrama" href="diagramas/login.html"><span aria-hidden="true">▶</span> Abrir versión interactiva</a></figcaption></figure>
+  <figure><a href="diagramas/aviso-rabbitmq.html" title="Abrir versión interactiva"><img src="imagenes/aviso-rabbitmq.png" alt="Secuencia del aviso: al confirmar se guarda el outbox; cada 5 segundos el publicador lo envía a RabbitMQ, que lo entrega al listener del catálogo, y este cierra la publicación."></a><figcaption>El aviso por RabbitMQ y el patrón outbox. <a class="btn-diagrama" href="diagramas/aviso-rabbitmq.html"><span aria-hidden="true">▶</span> Abrir versión interactiva</a></figcaption></figure>
+</section>
+
+<!-- ============================================================ 03 -->
+<section class="chapter" id="raiz">
+  <span class="eyebrow">03</span>
+  <h2>Carpeta raíz <code>MonkeyTrueque/</code></h2>
+  <div class="read">
+    <div class="table-wrap"><table>
+      <thead><tr><th>Archivo o carpeta</th><th>Por qué está ahí</th></tr></thead>
+      <tbody>
+        <tr><td class="file">README.md</td><td>La guía corta para instalar y arrancar. GitHub la muestra en la portada del repositorio.</td></tr>
+        <tr><td class="file">Iniciar-MySQL.sql</td><td>Script que crea las dos bases y el usuario <code>monkeytrueque</code>. Se ejecuta una vez por computadora.</td></tr>
+        <tr><td class="file">.gitignore</td><td>Lista lo que Git <b>no</b> sube: carpetas generadas como <code>runtime/</code> y <code>.kombai/</code>, y los <code>.env</code>.</td></tr>
+        <tr><td class="file">.git/</td><td>El historial de Git. No se toca a mano.</td></tr>
+        <tr><td class="file">.kombai/</td><td>Configuración de una herramienta de diseño con IA (Kombai). Está vacía y no afecta la app.</td></tr>
+        <tr><td class="file">docs/guia/</td><td>Esta guía, los diagramas interactivos y sus fuentes JSON (<code>diagramas/fuentes/</code>, por si hay que editarlos con Archify).</td></tr>
+        <tr><td class="file">backend/</td><td>Los dos microservicios en Java (secciones 04 a 06).</td></tr>
+        <tr><td class="file">frontend/</td><td>La web en Angular (sección 10).</td></tr>
+      </tbody>
+    </table></div>
+  </div>
+</section>
+
+<!-- ============================================================ 04 -->
+<section class="chapter" id="backend">
+  <span class="eyebrow">04</span>
+  <h2>Carpeta <code>backend/</code></h2>
+  <div class="read">
+    <div class="table-wrap"><table>
+      <thead><tr><th>Archivo o carpeta</th><th>Por qué está ahí</th></tr></thead>
+      <tbody>
+        <tr><td class="file">.env</td><td>Variables de configuración local (por ejemplo, cuánto dura la sesión). Los <code>iniciar.cmd</code> lo leen al arrancar. Tiene claves privadas: <b>no lo compartas fuera del equipo</b>.</td></tr>
+        <tr><td class="file">.gitignore</td><td>Evita subir <code>target/</code>, <code>.m2/</code> y <code>.env</code>.</td></tr>
+        <tr><td class="file">.m2/</td><td>Caché local de Maven: las librerías descargadas (Spring, MySQL, etc.). Se llena sola la primera vez. Si la borras, se vuelve a descargar.</td></tr>
+        <tr><td class="file">.metadata/</td><td>Configuración del IDE (Spring Tools/Eclipse). No es código.</td></tr>
+        <tr><td class="file">README.md</td><td>Detalle técnico: endpoints, colas y variables de entorno.</td></tr>
+        <tr><td class="file">DEMO_PRESENTACION.md</td><td>Cómo activar los datos de demostración (<code>DEMO_DATA_ENABLED=true</code>) y las cuentas de prueba (admin, moderadora y usuarios).</td></tr>
+        <tr><td class="file">mysql-init/</td><td>Carpeta vacía. El script real es <code>Iniciar-MySQL.sql</code> de la raíz.</td></tr>
+        <tr><td class="file">catalog-service/</td><td>Microservicio 1 (sección 05).</td></tr>
+        <tr><td class="file">exchange-service/</td><td>Microservicio 2 (sección 06).</td></tr>
+      </tbody>
+    </table></div>
+
+    <h3>Los archivos que tiene cada servicio</h3>
+    <div class="table-wrap"><table>
+      <thead><tr><th>Archivo</th><th>Qué es</th></tr></thead>
+      <tbody>
+        <tr><td class="file">pom.xml</td><td>La "lista de compras" de Maven: versión de Java (21), de Spring Boot (4.1.1) y las librerías.</td></tr>
+        <tr><td class="file">mvnw / mvnw.cmd</td><td><b>Maven Wrapper</b>: trae Maven incluido. Por eso nadie tiene que instalar Maven.</td></tr>
+        <tr><td class="file">iniciar.cmd</td><td>Script de Windows que lee <code>..\.env</code>, prepara variables (en catálogo también el usuario admin de la demo) y ejecuta <code>mvnw.cmd spring-boot:run</code>.</td></tr>
+        <tr><td class="file">.env (solo catálogo)</td><td>Las claves de Cloudinary para subir fotos. Es privado.</td></tr>
+        <tr><td class="file">HELP.md</td><td>Archivo que genera Spring Initializr al crear el proyecto. Solo tiene enlaces de ayuda.</td></tr>
+        <tr><td class="file">target/</td><td>Lo que genera la compilación (clases <code>.class</code>). Se borra y regenera sola.</td></tr>
+        <tr><td class="file">src/main/java/</td><td>El código Java.</td></tr>
+        <tr><td class="file">src/main/resources/</td><td><code>application.yml</code> (configuración) y <code>db/migration/</code> (Flyway).</td></tr>
+        <tr><td class="file">src/test/java/</td><td>Las pruebas automáticas (sección 13).</td></tr>
+      </tbody>
+    </table></div>
+
+    <h3><code>pom.xml</code>: las dependencias importantes</h3>
+    <div class="two">
+      <div class="box sin"><h4>Sin código</h4><p>Cada "starter" de Spring trae un paquete de funciones. Declaras lo que necesitas y Maven lo descarga. Por ejemplo, <i>security</i> trae el login, <i>data-jpa</i> trae la base de datos y <i>amqp</i> trae RabbitMQ.</p></div>
+      <div class="box con"><h4>Con código</h4>
+<pre><code>&lt;parent&gt;spring-boot-starter-parent <span class="k">4.1.1</span>&lt;/parent&gt;
+&lt;java.version&gt;<span class="k">21</span>&lt;/java.version&gt;</code></pre></div>
+    </div>
+    <div class="table-wrap"><table>
+      <thead><tr><th>Dependencia</th><th>Para qué sirve</th><th>Dónde</th></tr></thead>
+      <tbody>
+        <tr><td><code>spring-boot-starter-webmvc</code></td><td>Crear la API REST (<code>@RestController</code>)</td><td>los dos</td></tr>
+        <tr><td><code>spring-boot-starter-data-jpa</code></td><td>Entidades y repositorios (base de datos)</td><td>los dos</td></tr>
+        <tr><td><code>mysql-connector-j</code></td><td>El "driver" para hablar con MySQL</td><td>los dos</td></tr>
+        <tr><td><code>spring-boot-starter-flyway</code> + <code>flyway-mysql</code></td><td>Migraciones de la base de datos</td><td>los dos</td></tr>
+        <tr><td><code>spring-boot-starter-security</code></td><td>Seguridad y BCrypt</td><td>los dos</td></tr>
+        <tr><td><code>…-security-oauth2-resource-server</code></td><td>Validar el JWT en cada petición</td><td>los dos</td></tr>
+        <tr><td><code>spring-boot-starter-validation</code></td><td><code>@Valid</code>, <code>@NotBlank</code>, <code>@Size</code>…</td><td>los dos</td></tr>
+        <tr><td><code>spring-boot-starter-amqp</code></td><td>RabbitMQ</td><td>los dos</td></tr>
+        <tr><td><code>spring-boot-starter-actuator</code></td><td><code>/actuator/health</code> para saber si está vivo</td><td>los dos</td></tr>
+        <tr><td><code>spring-cloud-starter-openfeign</code></td><td>Llamar al catálogo con una interfaz</td><td>intercambios</td></tr>
+        <tr><td><code>…-circuitbreaker-resilience4j</code></td><td>Circuit breaker para esas llamadas</td><td>intercambios</td></tr>
+        <tr><td><code>spring-retry</code></td><td>Reintentos al procesar mensajes de RabbitMQ</td><td>catálogo</td></tr>
+        <tr><td><code>micrometer-registry-prometheus</code></td><td>Métricas en <code>/actuator/prometheus</code></td><td>los dos</td></tr>
+      </tbody>
+    </table></div>
+  </div>
+</section>
+
+<!-- ============================================================ 05 -->
+<section class="chapter" id="catalogo">
+  <span class="eyebrow">05</span>
+  <h2><code>catalog-service</code> (puerto 8081)</h2>
+  <div class="read">
+    <p class="lead">Se encarga de las cuentas, los perfiles, las publicaciones, los reportes, las sanciones, las apelaciones y el panel de administración.</p>
+
+    <h3>El patrón que se repite en todo el backend</h3>
+    <div class="two">
+      <div class="box sin"><h4>Sin código</h4><p>Una petición entra por un <b>Controller</b> (la recepción). El Controller usa un <b>Repository</b> (el almacenero) para leer o guardar <b>Entities</b> (las filas de una tabla). Si hay lógica que usan varios, va en un <b>Service</b>.</p></div>
+      <div class="box con"><h4>Con código</h4>
+<pre><code>Web → ListingController
+       → ListingRepository
+          → ListingEntity → tabla listings</code></pre></div>
+    </div>
+    <div class="table-wrap"><table>
+      <thead><tr><th>El nombre termina en…</th><th>Es…</th></tr></thead>
+      <tbody>
+        <tr><td><code>…Controller</code></td><td>Recibe las URLs <code>/api/...</code></td></tr>
+        <tr><td><code>…Entity</code></td><td>Una tabla convertida en clase Java</td></tr>
+        <tr><td><code>…Repository</code></td><td>Consultas a esa tabla</td></tr>
+        <tr><td><code>…Service</code></td><td>Lógica reutilizable</td></tr>
+        <tr><td><code>…Config</code></td><td>Configuración que Spring carga al arrancar</td></tr>
+      </tbody>
+    </table></div>
+
+    <h3>Todos los archivos de <code>src/main/java/pe/edu/monkeytrueque/catalog/</code></h3>
+    <div class="table-wrap"><table>
+      <thead><tr><th>Archivo</th><th>Qué hace</th><th>Prioridad</th></tr></thead>
+      <tbody>
+        <tr><td class="file">CatalogServiceApplication</td><td>El <code>main</code>. Arranca Spring Boot con <code>@SpringBootApplication</code>.</td><td><span class="tag">saber</span></td></tr>
+        <tr><td class="file">AuthController</td><td>Registro, login, logout, <code>/me</code> y editar el perfil.</td><td><span class="tag alta">estudiar</span></td></tr>
+        <tr><td class="file">JwtTokenService</td><td>Firma el JWT y lo guarda en la cookie.</td><td><span class="tag alta">estudiar</span></td></tr>
+        <tr><td class="file">SecurityConfig</td><td>Rutas públicas y privadas, BCrypt, CORS y validación del JWT.</td><td><span class="tag alta">estudiar</span></td></tr>
+        <tr><td class="file">SessionTokenResolver</td><td>Saca el token de la cookie <code>mt_session</code> o del encabezado Authorization.</td><td><span class="tag">saber</span></td></tr>
+        <tr><td class="file">TrustedOriginFilter</td><td>Protección CSRF: rechaza con 403 los cambios que no vienen de nuestra web.</td><td><span class="tag">saber</span></td></tr>
+        <tr><td class="file">ApiExceptionHandler</td><td>Convierte los errores de validación en mensajes en español (Problem Details).</td><td><span class="tag">saber</span></td></tr>
+        <tr><td class="file">ListingController</td><td>Crear, ver, editar y borrar publicaciones, con sus reglas.</td><td><span class="tag alta">estudiar</span></td></tr>
+        <tr><td class="file">ListingEntity</td><td>La tabla <code>listings</code>.</td><td><span class="tag alta">estudiar</span></td></tr>
+        <tr><td class="file">ListingRepository</td><td>Consultas a <code>listings</code>, como la de publicaciones públicas.</td><td><span class="tag alta">estudiar</span></td></tr>
+        <tr><td class="file">ListingCompletionController</td><td>Plan B para cerrar una publicación: verifica con intercambios que el trato está completo.</td><td><span class="tag">saber</span></td></tr>
+        <tr><td class="file">ExchangeActivity</td><td>Pregunta a intercambios si una publicación tiene tratos activos antes de editarla o borrarla.</td><td><span class="tag">saber</span></td></tr>
+        <tr><td class="file">RestClientConfig</td><td>Configura el cliente HTTP <code>RestClient</code>.</td><td><span class="tag">saber</span></td></tr>
+        <tr><td class="file">ExchangeEvents</td><td>Declara en RabbitMQ el exchange, la cola y la cola de mensajes fallidos.</td><td><span class="tag">saber</span></td></tr>
+        <tr><td class="file">CompletedExchangeListener</td><td>Escucha RabbitMQ y cierra la publicación entregada.</td><td><span class="tag alta">estudiar</span></td></tr>
+        <tr><td class="file">CloudinaryImageStorage</td><td>Sube y borra fotos en Cloudinary.</td><td><span class="tag">saber</span></td></tr>
+        <tr><td class="file">UserProfileController / Entity / Repository</td><td>Perfil público y edición del perfil.</td><td><span class="tag">saber</span></td></tr>
+        <tr><td class="file">ReportController / Entity / Repository</td><td>Reportar publicaciones y revisar reportes.</td><td><span class="tag">saber</span></td></tr>
+        <tr><td class="file">AppealController</td><td>Apelaciones de los sancionados.</td><td><span class="tag">saber</span></td></tr>
+        <tr><td class="file">AdminAccess</td><td>Revisa si el usuario es admin o moderador.</td><td><span class="tag">saber</span></td></tr>
+        <tr><td class="file">AdminController</td><td>El panel de administración: usuarios, sanciones, equipo y publicaciones ocultas.</td><td><span class="tag">saber</span></td></tr>
+        <tr><td class="file">ModerationSanctionService</td><td>Revisa si un usuario tiene una sanción activa.</td><td><span class="tag">saber</span></td></tr>
+        <tr><td class="file">ModerationSelfServiceController</td><td><code>/api/moderation/me/sanctions</code>: tus propias sanciones.</td><td><span class="tag">saber</span></td></tr>
+        <tr><td class="file">ModerationEvidenceController / Service</td><td>Archivos adjuntos (pruebas) de reportes y apelaciones.</td><td><span class="tag">saber</span></td></tr>
+        <tr><td class="file">AnalyticsController</td><td>Cuenta visitas diarias para las estadísticas del admin.</td><td><span class="tag">existe</span></td></tr>
+        <tr><td class="file">DemoAdminSeeder</td><td>Al arrancar, si la tabla de usuarios está vacía, crea <code>admin</code> / <code>Admin123*</code> y le da el rol de administrador.</td><td><span class="tag">existe</span></td></tr>
+        <tr><td class="file">DemoDataSeeder</td><td>Crea publicaciones de ejemplo si se activa <code>DEMO_DATA_ENABLED</code>.</td><td><span class="tag">existe</span></td></tr>
+      </tbody>
+    </table></div>
+
+    <h3>AuthController: registro y login</h3>
+    <div class="two">
+      <div class="box sin"><h4>Sin código</h4><p><b>Registro:</b> limpia el nombre de usuario, revisa que no exista, guarda la contraseña <b>triturada</b> con BCrypt, crea el perfil y entrega la sesión.</p><p><b>Login:</b> busca al usuario (solo si no está desactivado), compara la contraseña con el hash y, si coincide, entrega la cookie de sesión. Si falla, el mensaje es el mismo para usuario o contraseña incorrectos, para no revelar qué usuarios existen.</p></div>
+      <div class="box con"><h4>Con código</h4>
+<pre><code><span class="k">@PostMapping</span>("/register")
+<span class="k">@Transactional</span>
+AuthResponse register(<span class="k">@Valid @RequestBody</span> RegisterRequest request,
+                      HttpServletResponse http) {
+  String username = request.username().trim().toLowerCase(Locale.ROOT);
+  if (exists(username)) throw new ResponseStatusException(
+      HttpStatus.CONFLICT, "Ese nombre de usuario ya esta ocupado.");
+  String userId = UUID.randomUUID().toString();
+  jdbc.update("INSERT INTO app_users (user_id, username, password_hash) VALUES (?, ?, ?)",
+      userId, username, passwords.encode(request.password()));
+  ...
+  return response(userId, http);
+}</code></pre></div>
+    </div>
+    <ul>
+      <li><code>@Valid @RequestBody</code>: convierte el JSON en un objeto y lo valida.</li>
+      <li><code>@Transactional</code>: los dos INSERT (usuario y perfil) se guardan juntos o ninguno.</li>
+      <li>Los <code>?</code> son <b>consultas parametrizadas</b>: evitan la inyección SQL.</li>
+      <li><code>passwords.encode(...)</code> es BCrypt. <code>passwords.matches(clave, hash)</code> compara en el login.</li>
+    </ul>
+<pre><code><span class="c">// Validación con mensajes en español (record = clase de solo datos)</span>
+record RegisterRequest(
+  <span class="k">@NotBlank</span>(message = "El nombre es obligatorio") <span class="k">@Size</span>(max = 120, ...) String name,
+  <span class="k">@NotBlank</span>(...) <span class="k">@Pattern</span>(regexp = "[A-Za-z0-9._-]{3,32}", ...) String username,
+  <span class="k">@NotBlank</span>(...) <span class="k">@Size</span>(min = 8, max = 100, message = "La contraseña debe tener entre 8 y 100 caracteres") String password) {}</code></pre>
+
+    <h3>JwtTokenService: el pase y la cookie</h3>
+<pre><code>Instant startSession(HttpServletResponse response, String userId, String username, String name) {
+  Instant now = Instant.now();
+  Instant expiresAt = now.plus(lifetime);                     <span class="c">// 60 minutos por defecto</span>
+  JwtClaimsSet claims = JwtClaimsSet.builder().issuer("monkeytrueque")
+      .issuedAt(now).expiresAt(expiresAt)
+      .subject(userId).claim("username", username).claim("name", name).build();
+  String token = encoder.encode(... MacAlgorithm.HS256 ..., claims).getTokenValue();
+  response.addHeader(HttpHeaders.SET_COOKIE, cookie(token, lifetime).toString());
+  return expiresAt;
+}
+private ResponseCookie cookie(String value, Duration maxAge) {
+  return ResponseCookie.from("mt_session", value)
+      .httpOnly(true).secure(secureCookie).sameSite("Strict").path("/").maxAge(maxAge).build();
+}</code></pre>
+    <p>La explicación completa está en la sección 08 (Seguridad).</p>
+
+    <h3>ListingController: las reglas de las publicaciones</h3>
+    <div class="two">
+      <div class="box sin"><h4>Sin código</h4><ul><li>Solo el dueño puede editar o borrar (si no, <b>403</b>).</li><li>No se borra si hay tratos en curso (<b>409</b>).</li><li>Con tratos en curso no se cambia lo esencial: título, modo, precio o lo que acepta.</li><li>Entre 1 y 3 fotos JPG, PNG o WebP.</li><li>Si estás sancionado, no puedes publicar.</li></ul></div>
+      <div class="box con"><h4>Con código</h4>
+<pre><code><span class="k">@DeleteMapping</span>("/{id}")
+void delete(<span class="k">@AuthenticationPrincipal</span> Jwt jwt, <span class="k">@PathVariable</span> String id) {
+  var listing = repository.findById(id)
+      .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+  if (!listing.ownerId.equals(jwt.getSubject()))
+      throw new ResponseStatusException(HttpStatus.FORBIDDEN);
+  if (exchangeActivity.activeDeals(listing.id, jwt) > 0)
+      throw new ResponseStatusException(HttpStatus.CONFLICT,
+        "No puedes eliminar una publicación con propuestas o acuerdos en curso...");
+  ...
+}</code></pre></div>
+    </div>
+    <ul>
+      <li><code>@AuthenticationPrincipal Jwt jwt</code>: Spring entrega el token ya validado. <code>jwt.getSubject()</code> es el id del usuario. <b>Nunca</b> se confía en un id que mande la web.</li>
+      <li><code>@PathVariable</code>: toma el <code>{id}</code> de la URL.</li>
+      <li><code>orElseThrow(...)</code>: si no existe, responde 404.</li>
+    </ul>
+
+    <h4>Consulta SQL propia (ListingRepository)</h4>
+<pre><code><span class="k">@Query</span>(value = "SELECT l.* FROM listings l WHERE l.available = TRUE AND l.moderation_hidden = FALSE "
+    + "AND NOT EXISTS (SELECT 1 FROM app_users u WHERE u.user_id = l.owner_id AND u.deactivated = TRUE) "
+    + "ORDER BY l.created_at DESC LIMIT 100", nativeQuery = true)
+List&lt;ListingEntity&gt; findPublicListings();</code></pre>
+    <p>Devuelve solo publicaciones disponibles, no ocultas y de cuentas activas: las 100 más nuevas.</p>
+
+    <h3>CompletedExchangeListener: recibir el aviso de RabbitMQ</h3>
+<pre><code><span class="k">@RabbitListener</span>(queues = ExchangeEvents.QUEUE)   <span class="c">// "monkeytrueque.exchange.completed"</span>
+<span class="k">@Transactional</span>
+public void complete(String payload) {
+  String[] ids = payload.split("\\|", -1);        <span class="c">// "idTrato|idPublicacion"</span>
+  var listing = listings.findById(ids[1]).orElseThrow(...);
+  if (listing.available) {                        <span class="c">// idempotente: si llega 2 veces, no pasa nada</span>
+    listing.available = false;
+    listings.save(listing);
+  }
+}</code></pre>
+
+    <h3><code>application.yml</code> del catálogo</h3>
+    <div class="two">
+      <div class="box sin"><h4>Sin código</h4><p>Es el panel de configuración. Cada valor tiene la forma <code>${VARIABLE:valorPorDefecto}</code>: si existe la variable de entorno, usa esa; si no, usa el valor por defecto. Así funciona en cualquier PC sin tocar el código.</p></div>
+      <div class="box con"><h4>Con código</h4>
+<pre><code>spring:
+  config:
+    import: optional:file:.env[.properties]   <span class="c"># lee el .env de la carpeta</span>
+  datasource:
+    url: ${CATALOG_DB_URL:jdbc:mysql://localhost:3306/monkey_catalog?createDatabaseIfNotExist=true}
+    username: ${MYSQL_USER:monkeytrueque}
+  jpa:
+    hibernate:
+      ddl-auto: validate          <span class="c"># Hibernate NO crea tablas; Flyway sí</span>
+  mvc:
+    problemdetails:
+      enabled: true               <span class="c"># errores en formato RFC 7807</span>
+server:
+  port: ${SERVER_PORT:8081}
+app:
+  cors-origin: ${CORS_ORIGIN:http://localhost:4200}
+  jwt-expiration-minutes: ${APP_JWT_EXPIRATION_MINUTES:60}
+  exchange-url: ${EXCHANGE_URL:http://localhost:8082}</code></pre></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ 06 -->
+<section class="chapter" id="intercambios">
+  <span class="eyebrow">06</span>
+  <h2><code>exchange-service</code> (puerto 8082)</h2>
+  <div class="read">
+    <p class="lead">Se encarga del chat, los tratos (propuesta, encuentro, confirmación), las calificaciones, los bloqueos y el aviso por RabbitMQ.</p>
+
+    <h3>Todos los archivos de <code>src/main/java/pe/edu/monkeytrueque/exchange/</code></h3>
+    <div class="table-wrap"><table>
+      <thead><tr><th>Archivo</th><th>Qué hace</th><th>Prioridad</th></tr></thead>
+      <tbody>
+        <tr><td class="file">ExchangeServiceApplication</td><td>El <code>main</code>. Tiene <code>@EnableFeignClients</code> (activa Feign) y <code>@EnableScheduling</code> (activa el <code>@Scheduled</code> del outbox).</td><td><span class="tag">saber</span></td></tr>
+        <tr><td class="file">ExchangeController</td><td><b>El corazón del proyecto</b>: proponer, aceptar, rechazar, cancelar, encuentro, confirmar y calificar.</td><td><span class="tag alta">estudiar</span></td></tr>
+        <tr><td class="file">ConversationController</td><td>El chat: abrir una conversación, enviar mensajes y listar tus chats.</td><td><span class="tag alta">estudiar</span></td></tr>
+        <tr><td class="file">ExchangeEntity</td><td>La tabla <code>exchanges</code>: cada acuerdo con su estado.</td><td><span class="tag alta">estudiar</span></td></tr>
+        <tr><td class="file">ConversationEntity</td><td>La tabla <code>conversations</code>: dueño, interesado y publicación.</td><td><span class="tag alta">estudiar</span></td></tr>
+        <tr><td class="file">DirectMessageEntity</td><td>La tabla <code>direct_messages</code>: cada mensaje.</td><td><span class="tag alta">estudiar</span></td></tr>
+        <tr><td class="file">CompletionEventPublisher</td><td>Cada 5 segundos envía a RabbitMQ los avisos pendientes.</td><td><span class="tag alta">estudiar</span></td></tr>
+        <tr><td class="file">CompletionOutboxEntity / Repository</td><td>La tabla <code>exchange_completion_outbox</code>: avisos esperando salir.</td><td><span class="tag">saber</span></td></tr>
+        <tr><td class="file">CatalogClient</td><td>Interfaz <b>Feign</b> para llamar al catálogo.</td><td><span class="tag">saber</span></td></tr>
+        <tr><td class="file">CatalogListings</td><td>Envuelve esa llamada con un <b>circuit breaker</b> y traduce errores (404, 410, 503).</td><td><span class="tag">saber</span></td></tr>
+        <tr><td class="file">ExchangeEvents</td><td>Declara el exchange y la cola de RabbitMQ.</td><td><span class="tag">saber</span></td></tr>
+        <tr><td class="file">ExchangeRepository / ConversationRepository / DirectMessageRepository</td><td>Las consultas a cada tabla.</td><td><span class="tag">saber</span></td></tr>
+        <tr><td class="file">BlockedUserController / Entity / Repository</td><td>Bloquear y desbloquear usuarios.</td><td><span class="tag">saber</span></td></tr>
+        <tr><td class="file">PublicReputationController</td><td>Promedio de estrellas de un usuario. Las reseñas ocultas no cuentan.</td><td><span class="tag">saber</span></td></tr>
+        <tr><td class="file">AdminExchangeController</td><td>Para moderadores: ver acuerdos y ocultar reseñas ofensivas.</td><td><span class="tag">saber</span></td></tr>
+        <tr><td class="file">SecurityConfig / SessionTokenResolver / TrustedOriginFilter / ApiExceptionHandler</td><td>Copias de las del catálogo: la misma seguridad y los mismos errores.</td><td><span class="tag">saber</span></td></tr>
+        <tr><td class="file">DemoExchangeSeeder</td><td>Crea un chat y un acuerdo de ejemplo si se activa la variable de entorno.</td><td><span class="tag">existe</span></td></tr>
+        <tr><td class="file">MessageEntity / MessageRepository</td><td>La tabla antigua <code>exchange_messages</code>. Sus datos se pasaron a <code>direct_messages</code>.</td><td><span class="tag">existe</span></td></tr>
+      </tbody>
+    </table></div>
+
+    <h3>ExchangeController: la máquina de estados</h3>
+    <div class="two">
+      <div class="box sin"><h4>Sin código</h4><p>Cada acuerdo tiene un <b>estado</b>. Cada botón solo funciona desde ciertos estados: por ejemplo, no puedes confirmar la entrega si todavía no acordaron el encuentro. Si lo intentas, el backend responde <b>409 Conflict</b>.</p></div>
+      <div class="box con"><h4>Con código</h4>
+<pre><code>static final Set&lt;String&gt; ACTIVE = Set.of("proposal-sent", "accepted",
+    "meetup-proposed", "meetup-agreed", "confirmed-by-one");
+static final Set&lt;String&gt; COMMITTED = Set.of("accepted",
+    "meetup-proposed", "meetup-agreed", "confirmed-by-one");
+static final Set&lt;String&gt; COMPLETED = Set.of("confirmed-by-both", "rated");</code></pre></div>
+    </div>
+
+    <div class="table-wrap"><table>
+      <thead><tr><th>Ruta (POST)</th><th>Quién</th><th>Regla principal</th></tr></thead>
+      <tbody>
+        <tr><td><code>/api/exchanges</code></td><td>Interesado</td><td>Una propuesta activa por chat. En trueque, lo ofrecido debe ser de un tipo que el dueño acepta.</td></tr>
+        <tr><td><code>/{id}/accept</code></td><td>Dueño</td><td>Un solo trato aceptado por publicación.</td></tr>
+        <tr><td><code>/{id}/reject</code></td><td>Dueño</td><td>Solo si la propuesta está pendiente.</td></tr>
+        <tr><td><code>/{id}/cancel</code></td><td>Cualquiera</td><td>Hasta el encuentro acordado.</td></tr>
+        <tr><td><code>/{id}/meetup</code></td><td>Cualquiera</td><td>Fecha y hora en el futuro (hora de Lima).</td></tr>
+        <tr><td><code>/{id}/meetup/accept</code></td><td>El otro</td><td>No puedes aceptar tu propio encuentro.</td></tr>
+        <tr><td><code>/{id}/confirm</code></td><td>Cada uno</td><td>Desde el día del encuentro. Con dos confirmaciones se completa.</td></tr>
+        <tr><td><code>/{id}/rating</code></td><td>Cada uno</td><td>Solo después de las dos confirmaciones. Con 1 o 2 estrellas, el comentario debe tener al menos 30 caracteres.</td></tr>
+      </tbody>
+    </table></div>
+
+    <h4>Proponer (resumido)</h4>
+<pre><code><span class="k">@PostMapping @ResponseStatus</span>(HttpStatus.CREATED) <span class="k">@Transactional</span>
+ExchangeView propose(<span class="k">@AuthenticationPrincipal</span> Jwt jwt, <span class="k">@Valid @RequestBody</span> Proposal request) {
+  var conversation = conversations.findById(request.conversationId()).orElseThrow(...404...);
+  if (!conversation.visitorId.equals(jwt.getSubject())) <span class="c">→ 403  // solo el interesado</span>
+  if (!"active".equals(conversation.status))           <span class="c">→ 409  // chat cerrado</span>
+  if (exchanges.existsByConversationIdAndStatusIn(conversation.id, ACTIVE)) <span class="c">→ 409</span>
+  var listing = listings.available(conversation.listingId);   <span class="c">// Feign + circuit breaker</span>
+  ...
+  exchange.status = "proposal-sent";
+  exchanges.save(exchange);
+  notify(conversation, ..., "📝 Propuesta: ...");  <span class="c">// mensaje automático en el chat</span>
+}</code></pre>
+
+    <h4>Confirmar la entrega</h4>
+<pre><code>requireStatus(exchange, Set.of("meetup-agreed", "confirmed-by-one"), "Primero acuerden el encuentro");
+if (LocalDate.now(clock).isBefore(LocalDate.parse(exchange.meetupDate)))
+  conflict("Podrás confirmar la entrega a partir del día del encuentro");
+if (owner) exchange.ownerConfirmed = true; else exchange.proposerConfirmed = true;
+exchange.status = exchange.ownerConfirmed &amp;&amp; exchange.proposerConfirmed
+    ? "confirmed-by-both" : "confirmed-by-one";
+if (exchange.status.equals("confirmed-by-both")) {
+  outbox.save(new CompletionOutboxEntity(exchange.id, exchange.listingId));  <span class="c">// aviso para RabbitMQ</span>
+  closeOtherDeals(exchange);    <span class="c">// los demás tratos → listing-closed, los demás chats → closed</span>
+}</code></pre>
+
+    <h3>ConversationController: el chat</h3>
+    <div class="two">
+      <div class="box sin"><h4>Sin código</h4><ul><li><b>Un chat por persona y publicación</b>: si ya existe, se reutiliza.</li><li>No puedes escribirte a ti mismo.</li><li>No funciona si hay bloqueo, sanción de mensajes o si la publicación ya se entregó.</li><li>Solo los dos participantes leen el chat (si no, <b>403</b>).</li><li>Copia el título, la foto y el precio de la publicación para no preguntar al catálogo cada vez (<b>desnormalizar</b>).</li><li>La web vuelve a pedir el chat cada 3 segundos (<b>polling</b>).</li></ul></div>
+      <div class="box con"><h4>Con código</h4>
+<pre><code>private ConversationEntity participant(Jwt jwt, String id) {
+  var conversation = conversations.findById(id)
+      .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+  if (!conversation.ownerId.equals(jwt.getSubject())
+      &amp;&amp; !conversation.visitorId.equals(jwt.getSubject())) {
+    throw new ResponseStatusException(HttpStatus.FORBIDDEN);
+  }
+  return conversation;
+}</code></pre></div>
+    </div>
+    <div class="table-wrap"><table>
+      <thead><tr><th>Ruta</th><th>Qué hace</th></tr></thead>
+      <tbody>
+        <tr><td><code>GET /api/conversations/mine</code></td><td>Tus chats, los más recientes primero</td></tr>
+        <tr><td><code>POST /api/conversations</code></td><td>Abre un chat con el primer mensaje (201)</td></tr>
+        <tr><td><code>POST /api/conversations/{id}/messages</code></td><td>Envía un mensaje (máximo 400 caracteres)</td></tr>
+      </tbody>
+    </table></div>
+
+    <h3>ExchangeEntity: <code>@Version</code></h3>
+<pre><code><span class="k">@Entity @Table</span>(name = "exchanges")
+class ExchangeEntity {
+  <span class="k">@Id</span> String id;
+  <span class="k">@Column</span>(nullable = false) String status;
+  boolean ownerConfirmed;
+  boolean proposerConfirmed;
+  ...
+  <span class="k">@Version</span> long version;   <span class="c">// bloqueo optimista</span>
+}</code></pre>
+    <p><code>@Version</code> evita que dos cambios al mismo tiempo se pisen: si dos personas modifican el mismo acuerdo, la segunda falla en lugar de borrar el cambio de la primera.</p>
+  </div>
+</section>
+
+<!-- ============================================================ 07 -->
+<section class="chapter" id="basedatos">
+  <span class="eyebrow">07</span>
+  <h2>Base de datos y Flyway</h2>
+  <div class="read">
+    <h3>Un MySQL, dos bases</h3>
+<pre><code>MySQL80  (un solo servidor, puerto 3306)
+├── monkey_catalog    ← la usa catalog-service (8081)
+└── monkey_exchange   ← la usa exchange-service (8082)</code></pre>
+    <div class="two">
+      <div class="box sin"><h4>¿Por qué dos bases?</h4><p>Es el patrón <b>database per service</b> (una base por servicio). Cada servicio es dueño de sus datos y nunca entra a la base del otro: si necesita algo, lo pide por la API o por RabbitMQ. Así cada uno se puede cambiar sin romper al otro.</p></div>
+      <div class="box con"><h4>¿Dónde se configura?</h4>
+<pre><code><span class="c"># catálogo</span>
+jdbc:mysql://localhost:3306/monkey_catalog?createDatabaseIfNotExist=true
+<span class="c"># intercambios</span>
+jdbc:mysql://localhost:3306/monkey_exchange?createDatabaseIfNotExist=true</code></pre></div>
+    </div>
+
+    <h3>Tablas de <code>monkey_catalog</code></h3>
+    <div class="table-wrap"><table>
+      <thead><tr><th>Tabla</th><th>Guarda</th></tr></thead>
+      <tbody>
+        <tr><td><code>app_users</code></td><td>Cuentas: <code>user_id</code>, <code>username</code>, <code>password_hash</code> (BCrypt), <code>deactivated</code></td></tr>
+        <tr><td><code>user_profiles</code></td><td>Nombre visible, foto, descripción, distrito</td></tr>
+        <tr><td><code>listings</code></td><td>Publicaciones: título, modo, precio, fotos, <code>available</code>, <code>moderation_hidden</code></td></tr>
+        <tr><td><code>reports</code></td><td>Reportes de publicaciones y usuarios</td></tr>
+        <tr><td><code>moderation_staff</code></td><td>Quién es admin o moderador</td></tr>
+        <tr><td><code>moderation_sanctions</code></td><td>Sanciones (tipo, motivo, vencimiento, quién la puso)</td></tr>
+        <tr><td><code>moderation_appeals</code></td><td>Apelaciones</td></tr>
+        <tr><td><code>moderation_actions</code>, <code>moderation_case_events</code>, <code>moderation_case_notes</code>, <code>moderation_evidence_attachments</code></td><td>Historial, notas y pruebas de moderación</td></tr>
+        <tr><td><code>analytics_daily_visits</code></td><td>Visitas por día</td></tr>
+        <tr><td><code>flyway_schema_history</code></td><td>La crea Flyway: qué migraciones ya se aplicaron</td></tr>
+      </tbody>
+    </table></div>
+
+    <h3>Tablas de <code>monkey_exchange</code></h3>
+    <div class="table-wrap"><table>
+      <thead><tr><th>Tabla</th><th>Guarda</th></tr></thead>
+      <tbody>
+        <tr><td><code>conversations</code></td><td>Los chats. Tiene <code>UNIQUE (listing_id, visitor_id)</code>: un chat por persona y publicación</td></tr>
+        <tr><td><code>direct_messages</code></td><td>Los mensajes. <code>FOREIGN KEY</code> hacia <code>conversations</code></td></tr>
+        <tr><td><code>exchanges</code></td><td>Los acuerdos: <code>status</code>, encuentro, confirmaciones, calificaciones, <code>version</code></td></tr>
+        <tr><td><code>exchange_completion_outbox</code></td><td>Avisos pendientes para RabbitMQ (<code>delivered_at</code> vacío = pendiente)</td></tr>
+        <tr><td><code>blocked_users</code></td><td>Quién bloqueó a quién</td></tr>
+        <tr><td><code>exchange_moderation_actions</code></td><td>Reseñas ocultadas por moderadores</td></tr>
+        <tr><td><code>exchange_messages</code></td><td>Tabla antigua; ya no se usa</td></tr>
+        <tr><td><code>flyway_schema_history</code></td><td>La crea Flyway</td></tr>
+      </tbody>
+    </table></div>
+    <p>Fíjate en que <code>exchanges.listing_id</code> apunta a una publicación que vive en <b>la otra base</b>. Por eso no hay <code>FOREIGN KEY</code> entre bases: la relación se cuida por código, preguntando al catálogo.</p>
+
+    <h3>Cómo una clase Java se convierte en tabla (JPA)</h3>
+    <div class="two">
+      <div class="box sin"><h4>Sin código</h4><p><b>JPA/Hibernate</b> es un traductor: tú trabajas con objetos Java y él genera el SQL. <code>repository.save(objeto)</code> se convierte en un <code>INSERT</code> o un <code>UPDATE</code>.</p></div>
+      <div class="box con"><h4>Con código</h4>
+<pre><code><span class="k">@Entity @Table</span>(name = "conversations")
+class ConversationEntity {
+  <span class="k">@Id</span> String id;                           <span class="c">// PRIMARY KEY</span>
+  <span class="k">@Column</span>(nullable = false) String ownerId;  <span class="c">// owner_id NOT NULL</span>
+  <span class="k">@Column</span>(nullable = false) String status = "active";
+  <span class="k">@CreationTimestamp</span> Instant createdAt;     <span class="c">// fecha automática</span>
+}</code></pre></div>
+    </div>
+    <p>JPA convierte <code>ownerId</code> (camelCase en Java) en <code>owner_id</code> (snake_case en MySQL) automáticamente.</p>
+
+    <h3>Repositorios: SQL a partir del nombre</h3>
+<pre><code>interface ExchangeRepository extends JpaRepository&lt;ExchangeEntity, String&gt; {
+  boolean existsByConversationIdAndStatusIn(String conversationId, Collection&lt;String&gt; statuses);
+  <span class="c">// Spring genera: SELECT ... WHERE conversation_id = ? AND status IN (...)</span>
+}</code></pre>
+    <p><code>JpaRepository</code> ya trae <code>save</code>, <code>findById</code>, <code>findAll</code> y <code>delete</code>, sin escribir nada.</p>
+
+    <h3>Flyway: el historial de la base de datos</h3>
+    <div class="two">
+      <div class="box sin"><h4>Sin código</h4><p>Flyway es como Git, pero para la estructura de la base. Cada cambio es un archivo SQL numerado (<code>V1</code>, <code>V2</code>…). Al arrancar el servicio, Flyway mira qué versiones ya aplicó (en la tabla <code>flyway_schema_history</code>) y <b>ejecuta solo las que faltan, en orden</b>. Así todas las computadoras tienen exactamente la misma base, sin crear tablas a mano.</p></div>
+      <div class="box con"><h4>Con código</h4>
+<pre><code>V5__add_listing_modes.sql
+│ │  └── descripción (solo para humanos)
+│ └── dos guiones bajos (obligatorio)
+└── versión: define el ORDEN
+
+<span class="k">ALTER TABLE</span> listings
+  <span class="k">ADD COLUMN</span> listing_mode VARCHAR(16) NOT NULL DEFAULT 'trade',
+  <span class="k">ADD COLUMN</span> sale_price DECIMAL(10,2) NULL;</code></pre></div>
+    </div>
+    <ul>
+      <li><b>Nunca se edita una migración ya aplicada.</b> Flyway guarda un <i>checksum</i>; si cambias un archivo viejo, el servicio no arranca.</li>
+      <li>Para cambiar algo, se crea una migración nueva con el siguiente número.</li>
+      <li>El IDE ordena alfabéticamente (V1, V10, V11… V2), pero Flyway ejecuta por número.</li>
+      <li><code>ddl-auto: validate</code>: Hibernate no crea tablas, solo <b>comprueba</b> que las entidades coincidan con la base. Flyway crea; Hibernate verifica.</li>
+    </ul>
+
+    <h4>Migraciones de catalog-service</h4>
+    <div class="table-wrap"><table>
+      <thead><tr><th>Versión</th><th>Qué hace</th></tr></thead>
+      <tbody>
+        <tr><td>V1</td><td>Crea <code>listings</code></td></tr>
+        <tr><td>V2 / V4</td><td>Crea y luego elimina una tabla <code>exchange_event_inbox</code> que ya no se necesitó</td></tr>
+        <tr><td>V3</td><td>Moderación: <code>reports</code>, <code>moderation_actions</code> y la columna <code>moderation_hidden</code></td></tr>
+        <tr><td>V5</td><td>Modos trueque, venta o regalo y el precio</td></tr>
+        <tr><td>V6, V9, V23</td><td>Foto del dueño, referencia de ubicación y motivo de ocultamiento en <code>listings</code></td></tr>
+        <tr><td>V7, V8, V13 a V15, V17</td><td><code>user_profiles</code> y sus columnas (descripción, distrito, país…)</td></tr>
+        <tr><td>V10</td><td>Casos de moderación: sanciones, apelaciones, eventos y notas</td></tr>
+        <tr><td>V11</td><td><code>moderation_staff</code> (roles admin/moderador)</td></tr>
+        <tr><td>V12</td><td><code>analytics_daily_visits</code></td></tr>
+        <tr><td>V16</td><td>Adjuntos de evidencia</td></tr>
+        <tr><td>V18, V19</td><td>Archivar reportes y apelaciones</td></tr>
+        <tr><td>V20, V21</td><td>Cuentas locales <code>app_users</code>; luego el login pasa de correo a nombre de usuario</td></tr>
+        <tr><td>V22</td><td>Quita el correo del perfil</td></tr>
+      </tbody>
+    </table></div>
+    <h4>Migraciones de exchange-service</h4>
+    <div class="table-wrap"><table>
+      <thead><tr><th>Versión</th><th>Qué hace</th></tr></thead>
+      <tbody>
+        <tr><td>V1</td><td>Crea <code>exchanges</code> y <code>exchange_messages</code></td></tr>
+        <tr><td>V2</td><td>Crea el outbox <code>exchange_completion_outbox</code></td></tr>
+        <tr><td>V3, V4</td><td>Crea <code>conversations</code> y <code>direct_messages</code></td></tr>
+        <tr><td>V5</td><td>Crea <code>blocked_users</code></td></tr>
+        <tr><td>V6</td><td>Une cada acuerdo a su conversación (<code>conversation_id</code>)</td></tr>
+        <tr><td>V7</td><td>Moderación de reseñas</td></tr>
+        <tr><td>V8</td><td>Unifica los acuerdos dentro de los chats y agrega <code>meetup_proposed_by</code></td></tr>
+      </tbody>
+    </table></div>
+
+    <h3>¿Y la guía del curso?</h3>
+    <p>La guía crea la base <b>a mano</b> con un script en SQL Server y usa <code>ddl-auto=none</code>. Nosotros hacemos lo mismo, pero automatizado: los scripts los aplica Flyway, y usamos <code>validate</code>, que además verifica que las entidades coincidan con la base.</p>
+    <div class="say"><b>Frase para la presentación:</b> "Seguimos el patrón database per service: cada microservicio tiene su base. Versionamos la estructura con Flyway: cada cambio es un script numerado que se aplica solo al arrancar, y Hibernate solo valida."</div>
+  </div>
+</section>
+
+<!-- ============================================================ 08 -->
+<section class="chapter" id="seguridad">
+  <span class="eyebrow">08</span>
+  <h2>Seguridad</h2>
+  <div class="read">
+    <h3>1. Contraseñas con BCrypt</h3>
+    <div class="two">
+      <div class="box sin"><h4>Sin código</h4><p>La contraseña nunca se guarda tal cual: se guarda un <b>hash</b>, como un picadillo del que no se puede recuperar la original. En el login, se pica de nuevo lo que escribes y se compara. Ni el admin puede ver tu contraseña.</p></div>
+      <div class="box con"><h4>Con código</h4>
+<pre><code><span class="k">@Bean</span>
+PasswordEncoder passwordEncoder() { return new BCryptPasswordEncoder(); }
+
+passwords.encode(clave)          <span class="c">// al registrarse</span>
+passwords.matches(clave, hash)   <span class="c">// al iniciar sesión</span></code></pre></div>
+    </div>
+
+    <h3>2. JWT dentro de una cookie</h3>
+    <div class="two">
+      <div class="box sin"><h4>Sin código</h4><p>Al iniciar sesión, el servidor te da un <b>pase firmado</b> (JWT) que dice quién eres y hasta cuándo vale. Si alguien lo modifica, la firma deja de coincidir y se rechaza. El pase va dentro de una <b>cookie</b> que el navegador manda sola en cada pedido, pero que ningún JavaScript puede leer.</p></div>
+      <div class="box con"><h4>Propiedades de la cookie <code>mt_session</code></h4><ul><li><code>HttpOnly</code>: JavaScript no la lee (protege de XSS).</li><li><code>SameSite=Strict</code>: no viaja desde otras webs (protege de CSRF).</li><li><code>Max-Age</code>: dura lo mismo que el token (60 minutos).</li><li><code>Secure</code>: solo por HTTPS; en local está apagado.</li></ul></div>
+    </div>
+
+    <h3>3. SecurityConfig: quién puede entrar a qué</h3>
+<pre><code>return http.csrf(csrf -> csrf.disable())
+    .cors(cors -> cors.configurationSource(corsConfigurationSource))
+    .addFilterBefore(new TrustedOriginFilter(allowedOrigins(origin)), AbstractPreAuthenticatedProcessingFilter.class)
+    .authorizeHttpRequests(auth -> auth
+        .requestMatchers(HttpMethod.POST, "/api/auth/login", "/api/auth/register", "/api/auth/logout").permitAll()
+        .requestMatchers(HttpMethod.GET, "/api/listings", "/api/listings/*", "/actuator/health").permitAll()
+        .anyRequest().authenticated())                 <span class="c">// todo lo demás exige sesión → si no, 401</span>
+    .oauth2ResourceServer(oauth -> oauth.bearerTokenResolver(new SessionTokenResolver()).jwt(jwt -> {}))
+    .build();</code></pre>
+    <ul>
+      <li><code>permitAll()</code>: rutas públicas. <code>authenticated()</code>: hace falta sesión.</li>
+      <li><code>oauth2ResourceServer(...jwt...)</code>: Spring valida la firma y el vencimiento del JWT en cada petición.</li>
+      <li><b>¿Por qué <code>csrf.disable()</code>?</b> El CSRF de Spring es para formularios con sesión de servidor. Lo reemplazamos con la cookie <code>SameSite=Strict</code> y con <code>TrustedOriginFilter</code>.</li>
+    </ul>
+
+    <h3>4. TrustedOriginFilter (anti-CSRF)</h3>
+<pre><code>boolean usesSessionCookie = request.getHeader(AUTHORIZATION) == null &amp;&amp; sessionCookie(request) != null;
+if (usesSessionCookie &amp;&amp; !SAFE_METHODS.contains(request.getMethod())) {   <span class="c">// POST, PUT, PATCH, DELETE</span>
+  String origin = request.getHeader(HttpHeaders.ORIGIN);
+  if (origin == null || origins.checkOrigin(origin) == null) {
+    response.sendError(403, "Origen no permitido");
+    return;
+  }
+}
+chain.doFilter(request, response);   <span class="c">// "todo bien, sigue"</span></code></pre>
+
+    <h3>5. CORS</h3>
+    <p>La web (puerto 4200) y la API (8081/8082) son <b>orígenes distintos</b>. CORS es la regla del navegador que decide si la web puede llamar a la API. Permitimos solo <code>localhost</code> y activamos <code>setAllowCredentials(true)</code> para que viaje la cookie.</p>
+
+    <h3>6. Validación y errores en español</h3>
+<pre><code>{ "title": "Datos no válidos", "status": 400,
+  "detail": "El nombre es obligatorio",
+  "errors": { "name": "El nombre es obligatorio" } }</code></pre>
+    <p><code>ApiExceptionHandler</code> (con <code>@RestControllerAdvice</code>) atrapa los errores de todos los controladores y responde en formato <b>Problem Details (RFC 7807)</b>.</p>
+
+    <h3>7. Roles</h3>
+    <p>Los roles están en la tabla <code>moderation_staff</code>, separada de los usuarios. Registrarse nunca da un rol. El backend revisa el rol en cada acción del panel: esconder un botón en la web no basta para saltarse el permiso.</p>
+    <ul>
+      <li>Al administrador no se le puede sancionar.</li>
+      <li>Un moderador no puede sancionar a otro miembro del equipo, ni acumular sanciones si ya hay una activa.</li>
+      <li>Nadie del equipo puede quitarse una sanción a sí mismo, y un moderador solo puede quitar las sanciones que él puso.</li>
+    </ul>
+    <div class="say"><b>Frase para la presentación:</b> "Las contraseñas se guardan con BCrypt. La sesión es un JWT firmado con HS256 dentro de una cookie HttpOnly y SameSite=Strict de 60 minutos. Además revisamos el Origin en cada cambio y validamos todos los datos con mensajes en español."</div>
+  </div>
+</section>
+
+<!-- ============================================================ 09 -->
+<section class="chapter" id="comunicacion">
+  <span class="eyebrow">09</span>
+  <h2>Comunicación entre servicios y RabbitMQ</h2>
+  <div class="read">
+    <h3>Todas las llamadas entre los dos servicios</h3>
+    <div class="table-wrap"><table>
+      <thead><tr><th>De → a</th><th>Llamada</th><th>Con</th><th>Para qué</th></tr></thead>
+      <tbody>
+        <tr><td>Intercambios → Catálogo</td><td><code>GET /api/listings/{id}</code></td><td>Feign + circuit breaker</td><td>Ver si la publicación existe y está disponible; obtener su dueño, modo y precio</td></tr>
+        <tr><td>Intercambios → Catálogo</td><td><code>GET /api/moderation/me/sanctions</code></td><td>Feign</td><td>Ver si tienes una sanción de mensajes</td></tr>
+        <tr><td>Intercambios → Catálogo</td><td><code>GET /api/admin/me</code></td><td>Feign</td><td>Ver si eres admin o moderador</td></tr>
+        <tr><td>Catálogo → Intercambios</td><td><code>GET /api/exchanges/listing/{id}/active</code></td><td>RestClient</td><td>Contar tratos activos antes de editar o borrar</td></tr>
+        <tr><td>Catálogo → Intercambios</td><td><code>GET /api/exchanges/{id}</code></td><td>RestClient</td><td>Verificar que un trato está completo (plan B)</td></tr>
+        <tr><td>Intercambios → Catálogo</td><td>Mensaje <code>exchange.completed</code></td><td>RabbitMQ</td><td>Cerrar la publicación entregada</td></tr>
+      </tbody>
+    </table></div>
+    <p>En cada llamada se <b>reenvía el JWT del usuario</b> en el encabezado <code>Authorization: Bearer ...</code>. Los dos servicios comparten la misma clave (<code>APP_JWT_SECRET</code>), así que ambos verifican la firma.</p>
+
+    <h3>Feign y el circuit breaker</h3>
+<pre><code><span class="k">@FeignClient</span>(name = "catalog", url = "${app.catalog-url}")
+interface CatalogClient {
+  <span class="k">@GetMapping</span>("/api/listings/{id}")
+  CatalogListing get(<span class="k">@PathVariable</span>("id") String id);
+}
+
+<span class="c">// CatalogListings: run(intento, planB)</span>
+circuitBreakers.create("catalog").run(
+    () -> catalog.get(listingId),
+    error -> { ... throw new ResponseStatusException(HttpStatus.SERVICE_UNAVAILABLE, "Catálogo no disponible"); });</code></pre>
+    <p><b>Feign:</b> escribes una interfaz y Spring hace la llamada HTTP. <b>Circuit breaker:</b> si el catálogo falla muchas veces, deja de llamarlo un rato y responde 503 al instante, sin quedarse colgado.</p>
+
+    <h3>¿Qué es RabbitMQ?</h3>
+    <div class="two">
+      <div class="box sin"><h4>Sin código</h4><p>Es un <b>buzón de mensajes</b>. Un servicio deja un mensaje y sigue con lo suyo; el otro lo recoge cuando puede. Si el destinatario está apagado, el mensaje <b>espera en la cola</b>. Una llamada HTTP, en cambio, es como un teléfono: si nadie contesta, falla.</p></div>
+      <div class="box con"><h4>Las piezas en el proyecto</h4><ul><li>Productor: <code>CompletionEventPublisher</code></li><li>Exchange: <code>monkeytrueque.events</code></li><li>Routing key: <code>exchange.completed</code></li><li>Cola: <code>monkeytrueque.exchange.completed</code> (durable)</li><li>Consumidor: <code>CompletedExchangeListener</code></li><li>Dead letter: <code>…completed.failed</code></li></ul></div>
+    </div>
+
+    <h3>El patrón outbox</h3>
+<pre><code><span class="k">@Scheduled</span>(fixedDelayString = "${app.completion-publish-interval-ms:5000}")
+<span class="k">@Transactional</span>
+void publishPending() {
+  for (var entry : outbox.findTop50ByDeliveredAtIsNullOrderByCreatedAtAsc()) {
+    rabbit.convertAndSend(EXCHANGE, ROUTING_KEY, entry.exchangeId + "|" + entry.listingId, correlation);
+    var confirmation = correlation.getFuture().get(5, TimeUnit.SECONDS);
+    if (!confirmation.ack() ...) throw ...;    <span class="c">// RabbitMQ debe confirmar</span>
+    entry.deliveredAt = Instant.now();         <span class="c">// marcado como enviado</span>
+    outbox.save(entry);
+  }
+}</code></pre>
+    <ol class="steps">
+      <li>Al completarse el trato, el aviso se guarda en la tabla outbox, en la <b>misma transacción</b> que cambia el estado.</li>
+      <li>Cada 5 segundos, el publicador envía los pendientes.</li>
+      <li>Solo los marca como enviados si RabbitMQ confirma (<i>ack</i>).</li>
+      <li>Si RabbitMQ está caído, quedan pendientes y se reintentan. <b>No se pierde nada.</b></li>
+    </ol>
+    <div class="say"><b>Frase para la presentación:</b> "Usamos HTTP con Feign y RestClient cuando necesitamos una respuesta inmediata, y RabbitMQ para avisos que pueden procesarse después. Con el patrón outbox, el aviso nunca se pierde aunque RabbitMQ esté caído."</div>
+  </div>
+</section>
+
+<!-- ============================================================ 10 -->
+<section class="chapter" id="frontend">
+  <span class="eyebrow">10</span>
+  <h2>Carpeta <code>frontend/</code> (Angular 19)</h2>
+  <div class="read">
+    <h3>Archivos de la raíz del frontend</h3>
+    <div class="table-wrap"><table>
+      <thead><tr><th>Archivo o carpeta</th><th>Por qué está ahí</th></tr></thead>
+      <tbody>
+        <tr><td class="file">package.json</td><td>Las librerías de JavaScript (Angular, Angular Material, NgRx, ApexCharts, GSAP…) y los comandos: <code>npm start</code> = <code>ng serve</code>.</td></tr>
+        <tr><td class="file">package-lock.json</td><td>Las versiones exactas instaladas, para que todos tengan las mismas.</td></tr>
+        <tr><td class="file">angular.json</td><td>Configuración del proyecto Angular: dónde está el código, los estilos y la carpeta <code>public/</code>.</td></tr>
+        <tr><td class="file">tsconfig*.json</td><td>Configuración de TypeScript (el compilador).</td></tr>
+        <tr><td class="file">node_modules/</td><td>Las librerías descargadas por <code>npm install</code>. Pesa mucho y no se sube a GitHub.</td></tr>
+        <tr><td class="file">dist/</td><td>La web compilada para producción (<code>ng build</code>).</td></tr>
+        <tr><td class="file">public/</td><td>Archivos que se sirven tal cual: logos y mascota (<code>brand/</code>), y el mapa de distritos de Lima (<code>data/lima-districts.geojson</code>).</td></tr>
+        <tr><td class="file">README.md</td><td>Notas del frontend.</td></tr>
+      </tbody>
+    </table></div>
+
+    <h3><code>src/</code>: cómo arranca la web</h3>
+    <div class="table-wrap"><table>
+      <thead><tr><th>Archivo</th><th>Qué hace</th></tr></thead>
+      <tbody>
+        <tr><td class="file">index.html</td><td>La única página HTML. Tiene <code>&lt;app-root&gt;</code>, donde Angular dibuja todo, y las URLs de la API en etiquetas <code>meta</code>.</td></tr>
+        <tr><td class="file">main.ts</td><td>Punto de entrada: <code>bootstrapApplication(AppComponent, appConfig)</code>.</td></tr>
+        <tr><td class="file">styles.scss + styles/</td><td>Estilos globales: colores y medidas (<code>_tokens.scss</code>), marketplace y admin.</td></tr>
+        <tr><td class="file">app/app.config.ts</td><td>Registra el router, las animaciones y el store de NgRx.</td></tr>
+        <tr><td class="file">app/app.routes.ts</td><td>Qué pantalla corresponde a cada URL.</td></tr>
+        <tr><td class="file">app/app.component.*</td><td>El componente raíz que contiene todas las pantallas.</td></tr>
+      </tbody>
+    </table></div>
+<pre><code><span class="c">&lt;!-- index.html --&gt;</span>
+&lt;meta name="catalog-api-url" content="http://localhost:8081"&gt;
+&lt;meta name="exchange-api-url" content="http://localhost:8082"&gt;
+...
+&lt;app-root&gt;&lt;/app-root&gt;</code></pre>
+
+    <h3>Las rutas (<code>app.routes.ts</code>)</h3>
+    <div class="table-wrap"><table>
+      <thead><tr><th>URL</th><th>Pantalla</th></tr></thead>
+      <tbody>
+        <tr><td><code>/</code></td><td>Inicio del marketplace</td></tr>
+        <tr><td><code>/acceso</code></td><td>Iniciar sesión o registrarse</td></tr>
+        <tr><td><code>/explorar</code></td><td>Explorar publicaciones</td></tr>
+        <tr><td><code>/producto/:id</code></td><td>Detalle de una publicación</td></tr>
+        <tr><td><code>/publicar</code></td><td>Crear una publicación</td></tr>
+        <tr><td><code>/mensajes</code></td><td>Chats y acuerdos</td></tr>
+        <tr><td><code>/me-gusta</code></td><td>Favoritos</td></tr>
+        <tr><td><code>/perfil/:id</code></td><td>Perfil público</td></tr>
+        <tr><td><code>/cuenta</code>, <code>/cuenta/configuracion</code>, <code>/cuenta/restricciones</code></td><td>Tu cuenta, ajustes y sanciones</td></tr>
+        <tr><td><code>/admin</code>, <code>/admin/:section</code></td><td>Panel de administración</td></tr>
+        <tr><td><code>/como-funciona</code></td><td>Explicación para usuarios</td></tr>
+        <tr><td><code>**</code></td><td>Cualquier otra URL vuelve al inicio</td></tr>
+      </tbody>
+    </table></div>
+<pre><code>{ path: 'mensajes', title: 'Mensajes',
+  loadComponent: () => import('./features/account/messages-page.component')
+      .then((module) => module.MessagesPageComponent) },</code></pre>
+    <p><code>loadComponent</code> con <code>import()</code> es <b>lazy loading</b>: la pantalla se descarga solo cuando entras, y la web carga más rápido.</p>
+
+    <h3><code>app/core/</code>: lo que comparten todas las pantallas</h3>
+    <div class="table-wrap"><table>
+      <thead><tr><th>Archivo</th><th>Qué hace</th></tr></thead>
+      <tbody>
+        <tr><td class="file">auth/auth.service.ts</td><td>La sesión: login, registro, logout, saber quién eres y avisar cuando vence. <b>No guarda el token</b>, porque está en la cookie HttpOnly.</td></tr>
+        <tr><td class="file">data/marketplace-api.service.ts</td><td>Todas las llamadas a la API de publicaciones, chats y acuerdos.</td></tr>
+        <tr><td class="file">data/admin-api.service.ts</td><td>Las llamadas del panel de administración.</td></tr>
+        <tr><td class="file">data/unread-messages.service.ts</td><td>Cuenta los mensajes sin leer (consulta cada 3 segundos).</td></tr>
+        <tr><td class="file">data/page-analytics.service.ts</td><td>Registra las visitas a la web.</td></tr>
+        <tr><td class="file">data/demo-marketplace.data.ts</td><td>Distritos de Lima y comunidades de ejemplo.</td></tr>
+        <tr><td class="file">models/marketplace.models.ts</td><td>Los <b>tipos</b> de TypeScript: <code>ListingMode = 'trade' | 'sale' | 'gift'</code>, etc.</td></tr>
+      </tbody>
+    </table></div>
+    <div class="two">
+      <div class="box sin"><h4>Sin código: cómo llama a la API</h4><p>Cada llamada usa <code>fetch</code> con <code>credentials: 'include'</code> para que el navegador mande la cookie. Si el servidor tarda más de 20 segundos, se cancela. Si responde 401 (sesión vencida), te lleva a <code>/acceso?sesionVencida=true</code> con el aviso "Tu sesión ha expirado".</p></div>
+      <div class="box con"><h4>Con código</h4>
+<pre><code>response = await fetch(url, {
+  method, headers,
+  credentials: 'include',   <span class="c">// envía la cookie</span>
+  body: body ? JSON.stringify(body) : undefined,
+  signal: controller.signal  <span class="c">// timeout de 20 s</span>
+});</code></pre></div>
+    </div>
+
+    <h3><code>app/features/</code>: las pantallas</h3>
+    <div class="table-wrap"><table>
+      <thead><tr><th>Carpeta</th><th>Componentes</th></tr></thead>
+      <tbody>
+        <tr><td class="file">auth/</td><td><code>auth-page</code>: login y registro, con el aviso de sesión expirada.</td></tr>
+        <tr><td class="file">marketplace/</td><td><code>marketplace-home</code> (inicio), <code>explore-listings</code>, <code>product-detail</code>, <code>create-listing-page</code>, <code>listing-card</code> (tarjeta de publicación), <code>marketplace-header</code>, <code>liked-listings</code>, <code>how-it-works</code>, <code>brand-mark</code> (logo) y <code>dialogs/</code> (ventanas emergentes, como "Proponer encuentro").</td></tr>
+        <tr><td class="file">marketplace/state/</td><td>NgRx: <code>actions</code>, <code>reducer</code> y <code>selectors</code> (con sus pruebas <code>.spec.ts</code>).</td></tr>
+        <tr><td class="file">account/</td><td><code>messages-page</code> (chat y botones del acuerdo), <code>account</code>, <code>account-settings</code>, <code>account-restrictions</code>, <code>public-profile</code>, <code>block-user-dialog</code> y <code>report-user-dialog</code>.</td></tr>
+        <tr><td class="file">admin/</td><td><code>admin</code> (panel completo) y <code>revoke-sanction-dialog</code>.</td></tr>
+        <tr><td class="file">shared/</td><td><code>evidence-attachments</code>: adjuntar pruebas en reportes y apelaciones.</td></tr>
+      </tbody>
+    </table></div>
+    <p>Cada componente suele tener 3 archivos: <code>.ts</code> (lógica), <code>.html</code> (plantilla) y <code>.scss</code> (estilos).</p>
+
+    <h3>Un componente por dentro: <code>messages-page</code></h3>
+<pre><code><span class="k">@Component</span>({
+  selector: 'app-messages-page',
+  standalone: true,                     <span class="c">// no necesita NgModule</span>
+  imports: [CommonModule, FormsModule, RouterLink, MatIconModule, ...],
+  templateUrl: './messages-page.component.html',
+  styleUrl: './messages-page.component.scss',
+})
+export class MessagesPageComponent {
+  private readonly api = inject(MarketplaceApiService);   <span class="c">// inyección de dependencias</span>
+  readonly conversations = signal&lt;DirectConversation[]&gt;([]);   <span class="c">// estado reactivo</span>
+  readonly selectedId = signal('');
+  readonly selectedConversation = computed(() =>
+      this.conversations().find((c) => c.id === this.selectedId()) ?? null);
+}</code></pre>
+    <ul>
+      <li><code>signal(...)</code>: una variable reactiva. Cuando cambia, la pantalla se actualiza sola.</li>
+      <li><code>computed(...)</code>: un valor que se recalcula cuando cambian las señales de las que depende.</li>
+      <li><code>inject(...)</code>: pide un servicio a Angular (inyección de dependencias).</li>
+    </ul>
+<pre><code><span class="c">&lt;!-- plantilla: control de flujo nuevo de Angular --&gt;</span>
+@for (conversation of visibleConversations(); track conversation.id) {
+  &lt;button (click)="selectConversation(conversation)"&gt;...&lt;/button&gt;
+}
+@if (isOwner(conversation)) {
+  &lt;button (click)="acceptProposal(deal)"&gt;Aceptar&lt;/button&gt;
+  &lt;button (click)="rejectProposal(deal)"&gt;Rechazar&lt;/button&gt;
+}</code></pre>
+    <p><code>@for</code> repite, <code>@if</code> muestra según una condición, <code>(click)</code> conecta un botón con un método e <code>{{ valor }}</code> muestra un dato.</p>
+
+    <h3>NgRx (estado global del marketplace)</h3>
+    <div class="two">
+      <div class="box sin"><h4>Sin código</h4><p>Es una "caja central" con los filtros y las publicaciones. Las pantallas no la cambian directamente: <b>despachan una acción</b> ("cambió el distrito"). El <b>reducer</b> calcula el nuevo estado y los <b>selectors</b> leen solo lo que cada pantalla necesita.</p></div>
+      <div class="box con"><h4>Con código</h4>
+<pre><code><span class="c">// acción</span>
+export const setDistrict = createAction('[Marketplace] Set district',
+    props&lt;{ districtId: DistrictSelection }&gt;());
+<span class="c">// reducer</span>
+on(setDistrict, (state, { districtId }) =>
+    ({ ...state, selectedDistrictId: districtId })),
+<span class="c">// selector</span>
+export const selectListings = createSelector(
+    selectMarketplaceState, (state) => state.listings);</code></pre></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ 11 -->
+<section class="chapter" id="http">
+  <span class="eyebrow">11</span>
+  <h2>Códigos HTTP</h2>
+  <div class="read">
+    <div class="table-wrap"><table>
+      <thead><tr><th>Código</th><th>Significa</th><th>Ejemplo en MonkeyTrueque</th></tr></thead>
+      <tbody>
+        <tr><td><b>200</b> OK</td><td>Salió bien</td><td>Ver, editar, aceptar</td></tr>
+        <tr><td><b>201</b> Created</td><td>Se creó algo</td><td>Publicación, chat, propuesta: <code>@ResponseStatus(HttpStatus.CREATED)</code></td></tr>
+        <tr><td><b>204</b> No Content</td><td>Salió bien, sin respuesta</td><td>Borrar, logout</td></tr>
+        <tr><td><b>400</b> Bad Request</td><td>Datos mal enviados</td><td>Falla <code>@Valid</code>; encuentro en el pasado</td></tr>
+        <tr><td><b>401</b> Unauthorized</td><td>No sé quién eres</td><td>Sin cookie, sesión vencida, contraseña incorrecta</td></tr>
+        <tr><td><b>403</b> Forbidden</td><td>Sé quién eres, pero no puedes</td><td>Leer un chat ajeno, aceptar sin ser el dueño, estar sancionado, Origin no permitido</td></tr>
+        <tr><td><b>404</b> Not Found</td><td>No existe</td><td><code>orElseThrow(...NOT_FOUND)</code></td></tr>
+        <tr><td><b>409</b> Conflict</td><td>Choca con el estado actual</td><td>Usuario ocupado, borrar con tratos, segunda propuesta, chat cerrado</td></tr>
+        <tr><td><b>410</b> Gone</td><td>Existió, pero ya no está</td><td>"Esta publicación ya fue entregada"</td></tr>
+        <tr><td><b>503</b> Service Unavailable</td><td>El otro servicio no responde</td><td>"Catálogo no disponible" (circuit breaker)</td></tr>
+      </tbody>
+    </table></div>
+    <p>En el código siempre se lanzan igual: <code>throw new ResponseStatusException(HttpStatus.CONFLICT, "Esta conversación está cerrada");</code>. Spring lo convierte en la respuesta con el código y el mensaje en <code>detail</code>.</p>
+    <div class="say"><b>401 vs 403:</b> 401 = "no te conozco, inicia sesión". 403 = "te conozco, pero no puedes hacer esto".<br><b>404 vs 410:</b> 404 = "no existe". 410 = "existió, pero ya no está disponible".</div>
+  </div>
+</section>
+
+<!-- ============================================================ 12 -->
+<section class="chapter" id="anotaciones">
+  <span class="eyebrow">12</span>
+  <h2>Anotaciones de Spring</h2>
+  <div class="read">
+    <div class="table-wrap"><table>
+      <thead><tr><th>Anotación</th><th>Qué hace</th></tr></thead>
+      <tbody>
+        <tr><td><code>@SpringBootApplication</code></td><td>Marca la clase principal y activa la configuración automática</td></tr>
+        <tr><td><code>@RestController</code></td><td>La clase responde peticiones HTTP con JSON</td></tr>
+        <tr><td><code>@RequestMapping("/api/...")</code></td><td>Prefijo de URL de todo el controlador</td></tr>
+        <tr><td><code>@GetMapping</code> / <code>@PostMapping</code> / <code>@PutMapping</code> / <code>@PatchMapping</code> / <code>@DeleteMapping</code></td><td>Atiende ese método HTTP en esa ruta</td></tr>
+        <tr><td><code>@PathVariable</code></td><td>Toma un valor de la URL (<code>/{id}</code>)</td></tr>
+        <tr><td><code>@RequestBody</code></td><td>Convierte el JSON recibido en un objeto</td></tr>
+        <tr><td><code>@Valid</code></td><td>Valida ese objeto con sus anotaciones</td></tr>
+        <tr><td><code>@NotBlank</code>, <code>@Size</code>, <code>@Pattern</code>, <code>@Min</code>, <code>@Max</code></td><td>Reglas de validación con mensaje</td></tr>
+        <tr><td><code>@ResponseStatus</code></td><td>Código HTTP de la respuesta (201, 204)</td></tr>
+        <tr><td><code>@AuthenticationPrincipal</code></td><td>Entrega el usuario autenticado (el JWT)</td></tr>
+        <tr><td><code>@Transactional</code></td><td>Todo o nada en la base de datos</td></tr>
+        <tr><td><code>@Service</code>, <code>@Component</code></td><td>Spring crea el objeto y lo inyecta donde se necesite</td></tr>
+        <tr><td><code>@Configuration</code> + <code>@Bean</code></td><td>Clase de configuración y objetos que crea Spring</td></tr>
+        <tr><td><code>@Value("${...}")</code></td><td>Lee un valor de <code>application.yml</code></td></tr>
+        <tr><td><code>@Entity</code>, <code>@Table</code>, <code>@Id</code>, <code>@Column</code></td><td>Clase ↔ tabla (JPA)</td></tr>
+        <tr><td><code>@Version</code></td><td>Bloqueo optimista</td></tr>
+        <tr><td><code>@CreationTimestamp</code></td><td>Pone la fecha de creación automáticamente</td></tr>
+        <tr><td><code>@Query</code></td><td>Consulta SQL o JPQL escrita a mano</td></tr>
+        <tr><td><code>@RestControllerAdvice</code></td><td>Manejo de errores para todos los controladores</td></tr>
+        <tr><td><code>@FeignClient</code></td><td>Interfaz para llamar a otro servicio</td></tr>
+        <tr><td><code>@RabbitListener</code></td><td>Escucha una cola de RabbitMQ</td></tr>
+        <tr><td><code>@Scheduled</code></td><td>Ejecuta un método cada cierto tiempo</td></tr>
+        <tr><td><code>@EnableFeignClients</code>, <code>@EnableScheduling</code></td><td>Activan Feign y <code>@Scheduled</code></td></tr>
+      </tbody>
+    </table></div>
+    <p><b>Inyección de dependencias:</b> los controladores reciben lo que necesitan en el constructor, y Spring se los pasa.</p>
+<pre><code>AuthController(JdbcTemplate jdbc, PasswordEncoder passwords, JwtTokenService tokens, ...) {
+  this.jdbc = jdbc;           <span class="c">// nadie escribe "new": Spring los crea y los entrega</span>
+  this.passwords = passwords;
+  this.tokens = tokens;
+}</code></pre>
+  </div>
+</section>
+
+<!-- ============================================================ 13 -->
+<section class="chapter" id="pruebas">
+  <span class="eyebrow">13</span>
+  <h2>Pruebas automáticas</h2>
+  <div class="read">
+    <p>El backend tiene <b>65 pruebas</b> con <b>JUnit</b> y <b>Mockito</b>: 44 en catálogo y 21 en intercambios. Se ejecutan con <code>mvnw.cmd test</code> dentro de cada servicio.</p>
+    <div class="two">
+      <div class="box sin"><h4>Sin código</h4><p>Una prueba arma una situación falsa, ejecuta un método y comprueba el resultado. <b>Mockito</b> crea "dobles" de los repositorios (<i>mocks</i>), así la prueba no necesita una base de datos real.</p></div>
+      <div class="box con"><h4>Con código</h4>
+<pre><code><span class="k">@Test</span>
+void onlyTheVisitorCanProposeAndOnlyWhatTheListingAccepts() {
+  when(listings.available("listing-1")).thenReturn(tradeListing());
+  assertEquals(HttpStatus.FORBIDDEN,
+      status(() -> controller.propose(jwt("owner"), proposal("Libro", "object"))));
+  var created = controller.propose(jwt("visitor"), proposal("Libro", "object"));
+  assertEquals("proposal-sent", created.status());
+}</code></pre></div>
+    </div>
+    <ul>
+      <li><code>mock(...)</code>: crea un doble. <code>when(...).thenReturn(...)</code>: "cuando te pidan esto, devuelve aquello".</li>
+      <li><code>assertEquals(esperado, real)</code>: si no son iguales, la prueba falla.</li>
+      <li><code>verify(...)</code>: comprueba que se llamó a un método.</li>
+    </ul>
+    <p>Archivos: en catálogo, <code>AuthControllerTests</code>, <code>ListingControllerTests</code>, <code>AdminControllerTests</code>, <code>SessionCookieTests</code>, <code>SecurityConfigTests</code>, <code>ReportControllerTests</code>, <code>CompletedExchangeListenerTests</code>…; en intercambios, <code>ExchangeControllerTests</code>, <code>ConversationControllerTests</code>, <code>CompletionEventPublisherTests</code>, <code>RabbitBrokerIntegrationTests</code>…</p>
+  </div>
+</section>
+
+<!-- ============================================================ 14 -->
+<section class="chapter" id="glosario">
+  <span class="eyebrow">14</span>
+  <h2>Glosario</h2>
+  <div class="read">
+    <div class="table-wrap"><table>
+      <tbody>
+        <tr><td><b>API REST</b></td><td>URLs que devuelven datos en JSON (<code>GET /api/listings</code>).</td></tr>
+        <tr><td><b>Microservicio</b></td><td>Una aplicación pequeña con una sola responsabilidad y su propia base.</td></tr>
+        <tr><td><b>Endpoint</b></td><td>Una ruta concreta de la API.</td></tr>
+        <tr><td><b>DTO / record</b></td><td>Objeto de solo datos que entra o sale por la API.</td></tr>
+        <tr><td><b>Entidad</b></td><td>Clase que representa una tabla.</td></tr>
+        <tr><td><b>Repositorio</b></td><td>Interfaz para leer y guardar entidades.</td></tr>
+        <tr><td><b>JPA / Hibernate</b></td><td>Traduce objetos Java a SQL.</td></tr>
+        <tr><td><b>Flyway</b></td><td>Versiona la estructura de la base con scripts numerados.</td></tr>
+        <tr><td><b>BCrypt</b></td><td>Algoritmo de hash lento y con sal para contraseñas.</td></tr>
+        <tr><td><b>JWT</b></td><td>Token firmado con datos del usuario y su vencimiento.</td></tr>
+        <tr><td><b>Cookie HttpOnly</b></td><td>Cookie que JavaScript no puede leer.</td></tr>
+        <tr><td><b>CORS</b></td><td>Regla del navegador sobre qué webs pueden llamar a una API.</td></tr>
+        <tr><td><b>CSRF</b></td><td>Ataque en el que otra web usa tu sesión sin que lo sepas.</td></tr>
+        <tr><td><b>XSS</b></td><td>Ataque que inyecta JavaScript en una página.</td></tr>
+        <tr><td><b>Feign</b></td><td>Cliente HTTP declarativo: una interfaz que llama a otro servicio.</td></tr>
+        <tr><td><b>Circuit breaker</b></td><td>Corta las llamadas a un servicio que está fallando y responde al instante.</td></tr>
+        <tr><td><b>RabbitMQ / AMQP</b></td><td>Intermediario de mensajes y su protocolo.</td></tr>
+        <tr><td><b>Outbox</b></td><td>Guardar el evento en la base antes de enviarlo, para no perderlo.</td></tr>
+        <tr><td><b>Idempotente</b></td><td>Repetir la operación da el mismo resultado.</td></tr>
+        <tr><td><b>Transacción</b></td><td>Varias operaciones que se guardan todas o ninguna.</td></tr>
+        <tr><td><b>Bloqueo optimista</b></td><td>Detectar con <code>@Version</code> que otro cambió el dato antes que tú.</td></tr>
+        <tr><td><b>Polling</b></td><td>Preguntar al servidor cada cierto tiempo si hay novedades.</td></tr>
+        <tr><td><b>Lazy loading</b></td><td>Descargar una pantalla solo cuando se usa.</td></tr>
+        <tr><td><b>Signal</b></td><td>Variable reactiva de Angular.</td></tr>
+        <tr><td><b>NgRx</b></td><td>Estado global con acciones, reducer y selectors.</td></tr>
+      </tbody>
+    </table></div>
+  </div>
+</section>
+
+<!-- ============================================================ 15 -->
+<section class="chapter" id="preguntas">
+  <span class="eyebrow">15</span>
+  <h2>Preguntas</h2>
+  <div class="read">
+    <details><summary>¿Por qué usaron microservicios?</summary><div><p>Separamos dos responsabilidades: catálogo (cuentas y publicaciones) e intercambios (chat y tratos). Cada uno tiene su base, se puede arrancar y probar por separado, y si uno se cae el otro sigue funcionando.</p></div></details>
+    <details><summary>¿Cómo se comunican los servicios?</summary><div><p>Por HTTP con OpenFeign y RestClient cuando hace falta una respuesta inmediata, y por RabbitMQ para el aviso asíncrono de trato completado. En cada llamada se reenvía el JWT del usuario.</p></div></details>
+    <details><summary>¿Qué pasa si RabbitMQ está caído?</summary><div><p>El aviso se guarda en la tabla outbox en la misma transacción que completa el trato. Un proceso con <code>@Scheduled</code> lo reintenta cada 5 segundos hasta que RabbitMQ confirma.</p></div></details>
+    <details><summary>¿Y si catálogo no responde?</summary><div><p>La llamada de Feign tiene un circuit breaker: intercambios responde 503 "Catálogo no disponible" en vez de quedarse colgado.</p></div></details>
+    <details><summary>¿Cómo guardan las contraseñas?</summary><div><p>Con BCrypt: en la base solo queda el hash. En el login se compara con <code>matches()</code>; nunca se descifra.</p></div></details>
+    <details><summary>¿Por qué el JWT va en una cookie y no en localStorage?</summary><div><p>La cookie es HttpOnly: ningún JavaScript puede leerla. En localStorage, un ataque XSS podría robarlo.</p></div></details>
+    <details><summary>Si la cookie se envía sola, ¿cómo evitan CSRF?</summary><div><p>La cookie es SameSite=Strict, y además <code>TrustedOriginFilter</code> rechaza con 403 cualquier POST, PUT, PATCH o DELETE cuyo Origin no sea nuestra web.</p></div></details>
+    <details><summary>¿Cuánto dura la sesión?</summary><div><p>60 minutos, configurable con <code>APP_JWT_EXPIRATION_MINUTES</code>. Al vencer, el backend responde 401 y la web muestra "Tu sesión ha expirado".</p></div></details>
+    <details><summary>¿Cómo validan los datos?</summary><div><p>Con Bean Validation (<code>@Valid</code>, <code>@NotBlank</code>, <code>@Size</code>…) y mensajes en español, devueltos en formato Problem Details.</p></div></details>
+    <details><summary>¿Cómo se crean las tablas?</summary><div><p>Con Flyway: scripts numerados en <code>db/migration</code> que se aplican al arrancar. Hibernate usa <code>validate</code>, así que no crea tablas, solo comprueba.</p></div></details>
+    <details><summary>¿Por qué dos bases de datos?</summary><div><p>Por el patrón database per service: cada servicio es dueño de sus datos y solo se comunican por API o mensajes.</p></div></details>
+    <details><summary>¿Qué evita que dos personas se queden con el mismo producto?</summary><div><p>Solo puede haber un trato aceptado por publicación. Al completarse, los demás tratos pasan a <code>listing-closed</code>, los chats se cierran y catálogo marca la publicación como no disponible.</p></div></details>
+    <details><summary>¿Qué pasa si el dueño cambia el precio a mitad del trato?</summary><div><p>No puede: con tratos en curso, el backend bloquea los cambios de título, modo, precio y lo que acepta, y tampoco deja borrar.</p></div></details>
+    <details><summary>¿Cómo saben que la entrega pasó de verdad?</summary><div><p>Deben confirmar las dos personas, y solo desde el día del encuentro acordado.</p></div></details>
+    <details><summary>¿Quién puede leer los mensajes?</summary><div><p>Solo los dos participantes: <code>participant()</code> compara el id del JWT con el dueño y el interesado; si no coincide, 403.</p></div></details>
+    <details><summary>¿Qué es @Version?</summary><div><p>Bloqueo optimista: si dos cambios llegan a la vez sobre el mismo acuerdo, el segundo falla en lugar de pisar al primero.</p></div></details>
+    <details><summary>¿Cómo se actualiza el chat?</summary><div><p>Con polling: la web pide los datos cada 3 segundos. Como mejora usaríamos WebSockets.</p></div></details>
+    <details><summary>¿Qué mejorarían?</summary><div><p>Limitar los intentos de login, mover las claves a un gestor de secretos, usar WebSockets para el chat, cifrar los mensajes en la base y desplegar con HTTPS.</p></div></details>
+  </div>
+</section>
+
+</main>
+</div>
+</body>
+</html>

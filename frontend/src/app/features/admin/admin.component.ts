@@ -10,6 +10,7 @@ import { getCountries, getCountryCallingCode, parsePhoneNumberFromString, type C
 import { AuthService } from '../../core/auth/auth.service';
 import { AdminApiError, AdminApiService } from '../../core/data/admin-api.service';
 import { MarketplaceApiService } from '../../core/data/marketplace-api.service';
+import { formatMeetupTime } from '../../core/data/meetup-time';
 import { DEMO_DISTRICTS } from '../../core/data/demo-marketplace.data';
 import type { Listing } from '../../core/models/marketplace.models';
 import type { AdminAccountStatus, AdminAnalyticsSummary, AdminAppeal, AdminCaseEvent, AdminCaseNote, AdminEvidenceAttachment, AdminExchange, AdminExchangeDetail, AdminListing, AdminReport, AdminReview, AdminSanction, AdminStaff, AdminUser, AdminUserCreate, CaseAssigneeProfile, ModerationAction, ReviewModerationAction, StaffRole } from '../../core/data/admin-api.service';
@@ -1766,6 +1767,10 @@ export class AdminComponent {
 
   exchangeOwner(exchange: AdminExchange): AdminUser | undefined {
     return this.users().find((user) => user.userId === exchange.ownerId);
+  }
+
+  meetupTimeLabel(time: string): string {
+    return formatMeetupTime(time);
   }
 
   exchangeProposerName(exchange: AdminExchange): string {

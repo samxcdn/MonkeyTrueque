@@ -508,7 +508,7 @@
                 <section class="admin-exchange-information" aria-label="Información del intercambio">
                   <h3>Información de la operación</h3>
                   <div class="admin-exchange-information__items"><strong>{{ exchange.listingTitle }} <span>↔</span> {{ exchange.offeredTitle }}</strong><em>{{ exchangeStatus(exchange.status) }}</em></div>
-                  <dl><div><dt>Quien publicó</dt><dd>{{ exchangeUserName(exchange.ownerId) }} · {{ exchange.ownerConfirmed ? 'Confirmó' : 'Pendiente' }}</dd></div><div><dt>Quien propuso</dt><dd>{{ exchangeProposerName(exchange) }} · {{ exchange.proposerConfirmed ? 'Confirmó' : 'Pendiente' }}</dd></div><div><dt>Encuentro</dt><dd>{{ exchange.meetupPlace || 'Sin acordar' }} {{ exchange.meetupDate }} {{ exchange.meetupTime }}</dd></div></dl>
+                  <dl><div><dt>Quien publicó</dt><dd>{{ exchangeUserName(exchange.ownerId) }} · {{ exchange.ownerConfirmed ? 'Confirmó' : 'Pendiente' }}</dd></div><div><dt>Quien propuso</dt><dd>{{ exchangeProposerName(exchange) }} · {{ exchange.proposerConfirmed ? 'Confirmó' : 'Pendiente' }}</dd></div><div><dt>Encuentro</dt><dd>{{ exchange.meetupPlace || 'Sin acordar' }} {{ exchange.meetupDate }} {{ meetupTimeLabel(exchange.meetupTime) }}</dd></div></dl>
                 </section>
                 <div class="admin-note"><strong>Nota de la propuesta</strong><p>{{ exchange.note || 'No añadió una nota.' }}</p></div>
                 <h3>Mensajes privados</h3><div class="admin-note"><p>No se muestran conversaciones completas desde la vista general. Revisa solo la evidencia que la persona incluyó en un caso de moderación.</p></div>

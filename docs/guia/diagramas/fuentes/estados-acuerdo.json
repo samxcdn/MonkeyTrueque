@@ -1,0 +1,208 @@
+{
+  "schema_version": 1,
+  "diagram_type": "lifecycle",
+  "meta": {
+    "title": "MonkeyTrueque · Estados de un acuerdo",
+    "quality_profile": "showcase",
+    "viewBox": [
+      1060,
+      630
+    ],
+    "views": [
+      {
+        "id": "camino-feliz",
+        "label": "Camino feliz",
+        "focus": [
+          "propuesta",
+          "aceptada",
+          "encuentroPropuesto",
+          "encuentroAcordado",
+          "confirmadaUno",
+          "entregado",
+          "calificada"
+        ],
+        "note": "De la propuesta a la calificación."
+      },
+      {
+        "id": "salidas",
+        "label": "Termina sin entrega",
+        "focus": [
+          "propuesta",
+          "aceptada",
+          "rechazada",
+          "cancelada"
+        ],
+        "note": "El dueño rechaza o alguien cancela."
+      }
+    ]
+  },
+  "lanes": [
+    {
+      "id": "main",
+      "label": "Camino principal (columna status)"
+    },
+    {
+      "id": "eventos",
+      "label": "Salidas y entrega"
+    },
+    {
+      "id": "terminal",
+      "label": "Final"
+    }
+  ],
+  "states": [
+    {
+      "id": "propuesta",
+      "type": "start",
+      "label": "Propuesta",
+      "sublabel": "proposal-sent",
+      "lane": "main",
+      "col": 0,
+      "step": "1"
+    },
+    {
+      "id": "aceptada",
+      "type": "active",
+      "label": "Aceptada",
+      "sublabel": "accepted",
+      "lane": "main",
+      "col": 1,
+      "step": "2"
+    },
+    {
+      "id": "encuentroPropuesto",
+      "type": "waiting",
+      "label": "Encuentro",
+      "sublabel": "meetup-proposed",
+      "lane": "main",
+      "col": 2,
+      "step": "3"
+    },
+    {
+      "id": "encuentroAcordado",
+      "type": "active",
+      "label": "Acordado",
+      "sublabel": "meetup-agreed",
+      "lane": "main",
+      "col": 3,
+      "step": "4"
+    },
+    {
+      "id": "confirmadaUno",
+      "type": "waiting",
+      "label": "Confirma uno",
+      "sublabel": "confirmed-by-one",
+      "lane": "main",
+      "col": 4,
+      "step": "5"
+    },
+    {
+      "id": "rechazada",
+      "type": "failure",
+      "label": "Rechazada",
+      "sublabel": "rejected",
+      "lane": "eventos",
+      "col": 0
+    },
+    {
+      "id": "cancelada",
+      "type": "failure",
+      "label": "Cancelada",
+      "sublabel": "cancelled",
+      "lane": "eventos",
+      "col": 1
+    },
+    {
+      "id": "entregado",
+      "type": "success",
+      "label": "Entregado",
+      "sublabel": "confirmed-by-both",
+      "lane": "eventos",
+      "col": 2,
+      "tag": "aviso RabbitMQ"
+    },
+    {
+      "id": "calificada",
+      "type": "success",
+      "label": "Calificada",
+      "sublabel": "rated",
+      "lane": "terminal",
+      "col": 2,
+      "tag": "1 a 5 estrellas"
+    }
+  ],
+  "transitions": [
+    {
+      "id": "otro-confirma",
+      "from": "confirmadaUno",
+      "to": "entregado",
+      "variant": "emphasis",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "route": "straight"
+    },
+    {
+      "id": "califican",
+      "from": "entregado",
+      "to": "calificada",
+      "variant": "emphasis",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "route": "straight"
+    },
+    {
+      "id": "rechazo",
+      "from": "propuesta",
+      "to": "rechazada",
+      "variant": "security",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "via": [
+        [
+          94,
+          236
+        ],
+        [
+          402,
+          236
+        ]
+      ]
+    },
+    {
+      "id": "cancelacion",
+      "from": "aceptada",
+      "to": "cancelada",
+      "variant": "security",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "via": [
+        [
+          248,
+          212
+        ],
+        [
+          556,
+          212
+        ]
+      ]
+    }
+  ],
+  "cards": [
+    {
+      "dot": "emerald",
+      "title": "Camino feliz",
+      "items": [
+        "El interesado propone y el dueño acepta",
+        "Con dos confirmaciones se avisa por RabbitMQ"
+      ]
+    },
+    {
+      "dot": "rose",
+      "title": "Salidas",
+      "items": [
+        "Rechazo del dueño o cancelación",
+        "Si se entrega a otro: listing-closed"
+      ]
+    }
+  ]
+}

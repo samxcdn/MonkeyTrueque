@@ -37,6 +37,14 @@ class ExchangeControllerTests {
   }
 
   @Test
+  void meetupTimesAreShownInTwelveHourFormat() {
+    assertEquals("12:05 a. m.", ExchangeController.timeLabel("00:05"));
+    assertEquals("9:30 a. m.", ExchangeController.timeLabel("09:30"));
+    assertEquals("12:04 p. m.", ExchangeController.timeLabel("12:04"));
+    assertEquals("3:30 p. m.", ExchangeController.timeLabel("15:30"));
+  }
+
+  @Test
   void onlyTheVisitorCanProposeAndOnlyWhatTheListingAccepts() {
     when(listings.available("listing-1")).thenReturn(tradeListing());
 

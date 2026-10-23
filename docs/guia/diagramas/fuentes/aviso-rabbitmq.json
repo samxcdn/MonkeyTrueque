@@ -1,0 +1,48 @@
+{
+  "schema_version": 1,
+  "diagram_type": "sequence",
+  "meta": {
+    "title": "MonkeyTrueque · El aviso por RabbitMQ",
+    "quality_profile": "showcase",
+    "viewBox": [1060, 560],
+    "column_fit": "spread",
+    "views": [
+      { "id": "guardar", "label": "Guardar el aviso", "focus": ["usuario", "exchange", "dbex"], "note": "Se guarda en la misma transacción que completa el trato." },
+      { "id": "enviar", "label": "Enviar y recibir", "focus": ["publisher", "rabbit", "listener", "dbcat"], "note": "Cada 5 segundos se envían los avisos pendientes." }
+    ]
+  },
+  "participants": [
+    { "id": "usuario", "type": "external", "label": "Persona", "sublabel": "2.ª confirmación" },
+    { "id": "exchange", "type": "backend", "label": "Intercambios", "sublabel": "ExchangeController" },
+    { "id": "dbex", "type": "database", "label": "monkey_exchange", "sublabel": "tabla outbox" },
+    { "id": "publisher", "type": "backend", "label": "EventPublisher", "sublabel": "@Scheduled 5 s" },
+    { "id": "rabbit", "type": "messagebus", "label": "RabbitMQ", "sublabel": "cola completed" },
+    { "id": "listener", "type": "backend", "label": "Listener", "sublabel": "catalog-service" },
+    { "id": "dbcat", "type": "database", "label": "monkey_catalog", "sublabel": "tabla listings" }
+  ],
+  "segments": [
+    { "from": 150, "to": 270, "label": "Confirmar" },
+    { "from": 280, "to": 470, "label": "Avisar al catálogo" }
+  ],
+  "messages": [
+    { "id": "confirma", "from": "usuario", "to": "exchange", "y": 170, "label": "POST /{id}/confirm", "variant": "emphasis" },
+    { "id": "guarda", "from": "exchange", "to": "dbex", "y": 200, "label": "status + outbox", "variant": "emphasis" },
+    { "id": "ok", "from": "exchange", "to": "usuario", "y": 250, "label": "200 Entregado", "variant": "return" },
+    { "id": "lee", "from": "publisher", "to": "dbex", "y": 300, "label": "pendientes", "variant": "default" },
+    { "id": "envia", "from": "publisher", "to": "rabbit", "y": 335, "label": "idTrato|idPub", "variant": "dashed" },
+    { "id": "ack", "from": "rabbit", "to": "publisher", "y": 365, "label": "ack", "variant": "return" },
+    { "id": "marca", "from": "publisher", "to": "dbex", "y": 395, "label": "deliveredAt", "variant": "default" },
+    { "id": "entrega", "from": "rabbit", "to": "listener", "y": 425, "label": "mensaje", "variant": "dashed" },
+    { "id": "cierra", "from": "listener", "to": "dbcat", "y": 455, "label": "available = false", "variant": "emphasis" }
+  ],
+  "activations": [
+    { "participant": "exchange", "from": 165, "to": 256, "type": "backend" },
+    { "participant": "dbex", "from": 195, "to": 230, "type": "database" },
+    { "participant": "publisher", "from": 295, "to": 401, "type": "backend" },
+    { "participant": "listener", "from": 420, "to": 461, "type": "backend" }
+  ],
+  "cards": [
+    { "dot": "amber", "title": "Patrón outbox", "items": ["El aviso se guarda primero en la base", "Si RabbitMQ está caído, se reintenta"] },
+    { "dot": "emerald", "title": "Idempotente", "items": ["Si llega dos veces, no pasa nada", "Solo cierra si seguía disponible"] }
+  ]
+}

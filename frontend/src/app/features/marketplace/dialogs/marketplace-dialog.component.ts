@@ -8,6 +8,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatIconModule } from '@angular/material/icon';
 import { MarketplaceApiService } from '../../../core/data/marketplace-api.service';
+import { formatMeetupTime } from '../../../core/data/meetup-time';
 import { EvidenceAttachmentsComponent, EvidenceImageDraft } from '../../shared/evidence-attachments.component';
 import type { ConfirmationRole, District, DistrictId, ExchangeAgreement, Listing, ListingCategory, ListingKind, ListingMode, ListingPhoto } from '../../../core/models/marketplace.models';
 
@@ -95,6 +96,10 @@ export class MarketplaceDialogComponent {
   publishing = false;
   get isTrade(): boolean { return this.publishForm.controls.mode.value === 'trade'; }
   get isSale(): boolean { return this.publishForm.controls.mode.value === 'sale'; }
+  get meetupTimeHint(): string {
+    const time = this.meetupForm.controls.time.value;
+    return time ? `Formato de 24 horas · ${formatMeetupTime(time)}` : 'Formato de 24 horas (15:30 = 3:30 p. m.)';
+  }
   readonly today = this.formatToday();
 
   constructor() {

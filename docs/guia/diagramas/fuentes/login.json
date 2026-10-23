@@ -1,0 +1,55 @@
+{
+  "schema_version": 1,
+  "diagram_type": "sequence",
+  "meta": {
+    "title": "MonkeyTrueque · Inicio de sesión",
+    "quality_profile": "showcase",
+    "viewBox": [1060, 600],
+    "column_fit": "spread",
+    "views": [
+      { "id": "login", "label": "Login", "focus": ["usuario", "web", "auth", "db", "bcrypt", "jwt"], "note": "Se valida la contraseña y se entrega la cookie." },
+      { "id": "siguiente", "label": "Peticiones siguientes", "focus": ["web", "filtro", "auth"], "note": "Cada petición lleva la cookie y Spring Security la verifica." }
+    ]
+  },
+  "participants": [
+    { "id": "usuario", "type": "external", "label": "Usuario", "sublabel": "navegador" },
+    { "id": "web", "type": "frontend", "label": "Web Angular", "sublabel": "auth.service.ts" },
+    { "id": "filtro", "type": "security", "label": "Spring Security", "sublabel": "filtros + JWT" },
+    { "id": "auth", "type": "backend", "label": "AuthController", "sublabel": "catalog-service" },
+    { "id": "db", "type": "database", "label": "MySQL", "sublabel": "app_users" },
+    { "id": "bcrypt", "type": "security", "label": "BCrypt", "sublabel": "PasswordEncoder" },
+    { "id": "jwt", "type": "security", "label": "JwtTokenService", "sublabel": "HS256" }
+  ],
+  "segments": [
+    { "from": 150, "to": 420, "label": "Login" },
+    { "from": 430, "to": 520, "label": "Petición siguiente" }
+  ],
+  "messages": [
+    { "id": "escribe", "from": "usuario", "to": "web", "y": 165, "label": "usuario + clave" },
+    { "id": "post-login", "from": "web", "to": "auth", "y": 192, "label": "POST /api/auth/login", "variant": "emphasis" },
+    { "id": "select", "from": "auth", "to": "db", "y": 220, "label": "SELECT por username" },
+    { "id": "hash", "from": "db", "to": "auth", "y": 248, "label": "password_hash", "variant": "return" },
+    { "id": "matches", "from": "auth", "to": "bcrypt", "y": 278, "label": "matches(clave, hash)", "variant": "security" },
+    { "id": "ok", "from": "bcrypt", "to": "auth", "y": 306, "label": "true", "variant": "return" },
+    { "id": "firma", "from": "auth", "to": "jwt", "y": 336, "label": "startSession()", "variant": "security" },
+    { "id": "token", "from": "jwt", "to": "auth", "y": 364, "label": "JWT firmado", "variant": "return" },
+    { "id": "cookie", "from": "auth", "to": "web", "y": 392, "label": "200 + Set-Cookie mt_session", "variant": "return" },
+    { "id": "listo", "from": "web", "to": "usuario", "y": 414, "label": "sesión iniciada", "variant": "return" },
+    { "id": "me", "from": "web", "to": "filtro", "y": 450, "label": "GET /api/auth/me + cookie", "variant": "emphasis" },
+    { "id": "valida", "from": "filtro", "to": "auth", "y": 478, "label": "JWT válido", "variant": "security" },
+    { "id": "usuario-actual", "from": "auth", "to": "web", "y": 506, "label": "usuario + expiresAt", "variant": "return" }
+  ],
+  "activations": [
+    { "participant": "web", "from": 160, "to": 512, "type": "frontend" },
+    { "participant": "auth", "from": 192, "to": 398, "type": "backend" },
+    { "participant": "db", "from": 215, "to": 254, "type": "database" },
+    { "participant": "bcrypt", "from": 273, "to": 312, "type": "security" },
+    { "participant": "jwt", "from": 331, "to": 370, "type": "security" },
+    { "participant": "filtro", "from": 445, "to": 484, "type": "security" }
+  ],
+  "cards": [
+    { "dot": "rose", "title": "Contraseña", "items": ["Se guarda como hash BCrypt", "Se compara con matches(), nunca se descifra"] },
+    { "dot": "emerald", "title": "Cookie de sesión", "items": ["HttpOnly: JavaScript no la lee", "SameSite=Strict y 60 minutos de duración"] },
+    { "dot": "cyan", "title": "Después del login", "items": ["El navegador manda la cookie solo", "Sin cookie válida, la respuesta es 401"] }
+  ]
+}

@@ -1,0 +1,260 @@
+{
+  "schema_version": 2,
+  "diagram_type": "workflow",
+  "meta": {
+    "title": "MonkeyTrueque · El trueque paso a paso",
+    "quality_profile": "showcase",
+    "views": [
+      {
+        "id": "personas",
+        "label": "Lo que hacen las personas",
+        "focus": [
+          "escribe",
+          "propone",
+          "acepta",
+          "encuentro",
+          "confirman",
+          "califican"
+        ],
+        "note": "Cada paso es un botón en la pantalla de mensajes."
+      },
+      {
+        "id": "sistema",
+        "label": "Lo que hace el sistema",
+        "focus": [
+          "confirman",
+          "outbox",
+          "rabbit"
+        ],
+        "note": "Al confirmar los dos, se avisa al catálogo."
+      }
+    ],
+    "legend": {
+      "entries": {
+        "frontend": {
+          "label": "Interesado"
+        },
+        "security": {
+          "label": "Decisión / rechazo"
+        },
+        "backend": {
+          "label": "Paso de los dos"
+        },
+        "external": {
+          "label": "Calificación"
+        },
+        "database": {
+          "label": "Base de datos"
+        },
+        "messagebus": {
+          "label": "RabbitMQ"
+        }
+      }
+    }
+  },
+  "lanes": [
+    {
+      "id": "personas",
+      "label": "Las personas (pantalla de mensajes)"
+    },
+    {
+      "id": "sistema",
+      "label": "Sistema (exchange-service)"
+    },
+    {
+      "id": "salidas",
+      "label": "Si no se acepta",
+      "variant": "exception"
+    }
+  ],
+  "phases": [
+    {
+      "id": "contacto",
+      "label": "Contacto",
+      "fromCol": 0,
+      "toCol": 1
+    },
+    {
+      "id": "acuerdo",
+      "label": "Acuerdo",
+      "fromCol": 2,
+      "toCol": 3,
+      "variant": "emphasis"
+    },
+    {
+      "id": "entrega",
+      "label": "Entrega",
+      "fromCol": 4,
+      "toCol": 5,
+      "variant": "dashed"
+    }
+  ],
+  "mainPath": [
+    "escribe",
+    "propone",
+    "acepta",
+    "encuentro",
+    "confirman",
+    "califican"
+  ],
+  "nodes": [
+    {
+      "id": "escribe",
+      "lane": "personas",
+      "col": 0,
+      "type": "frontend",
+      "label": "Escribe",
+      "sublabel": "abre el chat",
+      "width": 120,
+      "tag": "interesado"
+    },
+    {
+      "id": "propone",
+      "lane": "personas",
+      "col": 1,
+      "type": "frontend",
+      "label": "Propone",
+      "sublabel": "trueque / compra",
+      "width": 120,
+      "tag": "interesado"
+    },
+    {
+      "id": "acepta",
+      "lane": "personas",
+      "col": 2,
+      "type": "security",
+      "label": "Acepta",
+      "sublabel": "solo el dueño",
+      "width": 120,
+      "tag": "dueño"
+    },
+    {
+      "id": "encuentro",
+      "lane": "personas",
+      "col": 3,
+      "type": "backend",
+      "label": "Encuentro",
+      "sublabel": "lugar y hora",
+      "width": 120,
+      "tag": "los dos"
+    },
+    {
+      "id": "confirman",
+      "lane": "personas",
+      "col": 4,
+      "type": "backend",
+      "label": "Confirman",
+      "sublabel": "desde el día",
+      "tag": "los dos",
+      "width": 120
+    },
+    {
+      "id": "califican",
+      "lane": "personas",
+      "col": 5,
+      "type": "external",
+      "label": "Califican",
+      "sublabel": "1 a 5 estrellas",
+      "width": 120,
+      "tag": "los dos"
+    },
+    {
+      "id": "outbox",
+      "lane": "sistema",
+      "col": 4,
+      "type": "database",
+      "label": "Outbox",
+      "sublabel": "aviso guardado",
+      "width": 120
+    },
+    {
+      "id": "rabbit",
+      "lane": "sistema",
+      "col": 5,
+      "type": "messagebus",
+      "label": "RabbitMQ",
+      "sublabel": "cierra publicación",
+      "width": 120
+    },
+    {
+      "id": "rechaza",
+      "lane": "salidas",
+      "col": 2,
+      "type": "security",
+      "label": "Rechaza",
+      "sublabel": "o se cancela",
+      "width": 120
+    }
+  ],
+  "edges": [
+    {
+      "id": "e1",
+      "from": "escribe",
+      "to": "propone"
+    },
+    {
+      "id": "e2",
+      "from": "propone",
+      "to": "acepta",
+      "variant": "emphasis"
+    },
+    {
+      "id": "e3",
+      "from": "acepta",
+      "to": "encuentro",
+      "variant": "emphasis"
+    },
+    {
+      "id": "e4",
+      "from": "encuentro",
+      "to": "confirman"
+    },
+    {
+      "id": "e5",
+      "from": "confirman",
+      "to": "califican",
+      "variant": "emphasis"
+    },
+    {
+      "id": "e6",
+      "from": "confirman",
+      "to": "outbox",
+      "label": "guarda",
+      "variant": "dashed",
+      "role": "async"
+    },
+    {
+      "id": "e7",
+      "from": "outbox",
+      "to": "rabbit",
+      "variant": "dashed",
+      "role": "async"
+    },
+    {
+      "id": "e8",
+      "from": "propone",
+      "to": "rechaza",
+      "label": "no",
+      "variant": "security",
+      "role": "error"
+    }
+  ],
+  "cards": [
+    {
+      "dot": "emerald",
+      "title": "Reglas",
+      "items": [
+        "Una propuesta activa por chat",
+        "Un solo trato aceptado por publicación"
+      ]
+    },
+    {
+      "dot": "amber",
+      "title": "Al terminar",
+      "items": [
+        "El aviso viaja por RabbitMQ",
+        "Los demás chats de esa publicación se cierran"
+      ]
+    }
+  ]
+}

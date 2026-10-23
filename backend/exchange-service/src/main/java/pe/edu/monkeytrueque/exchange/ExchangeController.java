@@ -193,7 +193,7 @@ class ExchangeController {
     exchange.meetupTime = request.time();
     exchange.meetupProposedBy = role(exchange, jwt);
     exchange.status = "meetup-proposed";
-    notifyParticipants(exchange, jwt, "📍 Encuentro propuesto: " + exchange.meetupPlace + " · " + exchange.meetupDate + " · " + exchange.meetupTime + ". Falta que la otra persona lo acepte.");
+    notifyParticipants(exchange, jwt, "📍 Encuentro propuesto: " + exchange.meetupPlace + " · " + exchange.meetupDate + " · " + timeLabel(exchange.meetupTime) + ". Falta que la otra persona lo acepte.");
     return view(exchange);
   }
 
@@ -204,7 +204,7 @@ class ExchangeController {
     requireStatus(exchange, Set.of("meetup-proposed"), "No hay un encuentro pendiente de aceptar");
     if (role(exchange, jwt).equals(exchange.meetupProposedBy)) conflict("La otra persona debe aceptar el encuentro que propusiste");
     exchange.status = "meetup-agreed";
-    notifyParticipants(exchange, jwt, "🤝 Encuentro acordado: " + exchange.meetupPlace + " · " + exchange.meetupDate + " · " + exchange.meetupTime + ".");
+    notifyParticipants(exchange, jwt, "🤝 Encuentro acordado: " + exchange.meetupPlace + " · " + exchange.meetupDate + " · " + timeLabel(exchange.meetupTime) + ".");
     return view(exchange);
   }
 
@@ -333,6 +333,13 @@ class ExchangeController {
         exchange.offeredTitle, exchange.offeredKind, exchange.note, exchange.status,
         exchange.meetupPlace, exchange.meetupDate, exchange.meetupTime, exchange.meetupProposedBy,
         exchange.ownerConfirmed, exchange.proposerConfirmed, ratings);
+  }
+
+  /** "15:30" se muestra en el chat como "3:30 p. m.". */
+  static String timeLabel(String time) {
+    LocalTime value = LocalTime.parse(time);
+    int hour = value.getHour() % 12 == 0 ? 12 : value.getHour() % 12;
+    return hour + ":" + String.format("%02d", value.getMinute()) + (value.getHour() < 12 ? " a. m." : " p. m.");
   }
 
   private static void bad(String reason) { throw new ResponseStatusException(HttpStatus.BAD_REQUEST, reason); }

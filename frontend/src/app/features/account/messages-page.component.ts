@@ -9,6 +9,7 @@ import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { firstValueFrom } from 'rxjs';
 import { AuthService } from '../../core/auth/auth.service';
 import { MarketplaceApiService } from '../../core/data/marketplace-api.service';
+import { formatMeetupTime } from '../../core/data/meetup-time';
 import type { AgreementStatus, DirectConversation, DirectMessage, PublicProfile, ServerExchange } from '../../core/data/marketplace-api.service';
 import type { ConfirmationRole } from '../../core/models/marketplace.models';
 import type { MarketplaceDialogData, MarketplaceDialogResult } from '../marketplace/dialogs/marketplace-dialog.component';
@@ -195,6 +196,10 @@ export class MessagesPageComponent {
       rated: 'Finalizado', rejected: 'Propuesta rechazada', cancelled: 'Acuerdo cancelado', 'listing-closed': 'Publicación entregada a otra persona',
     } as Record<AgreementStatus, string>)[status] ?? status;
   }
+  meetupTimeLabel(time: string): string {
+    return formatMeetupTime(time);
+  }
+
   meetupDateLabel(date: string): string {
     if (!date) return '';
     const [year, month, day] = date.split('-').map(Number);

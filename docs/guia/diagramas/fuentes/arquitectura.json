@@ -1,0 +1,43 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "MonkeyTrueque · Arquitectura",
+    "quality_profile": "showcase",
+    "viewBox": [1060, 600],
+    "views": [
+      { "id": "web-a-servicios", "label": "De la web a los servicios", "focus": ["usuario", "web", "catalogo", "intercambios"], "note": "La web llama a los dos servicios con la cookie de sesión." },
+      { "id": "bases", "label": "Una base por servicio", "focus": ["catalogo", "dbcat", "intercambios", "dbex"], "note": "Cada servicio solo toca su propia base de datos." },
+      { "id": "entre-servicios", "label": "Comunicación entre servicios", "focus": ["catalogo", "intercambios", "rabbit"], "note": "HTTP cuando hace falta respuesta inmediata, RabbitMQ para avisos." }
+    ]
+  },
+  "components": [
+    { "id": "usuario", "type": "external", "label": "Usuario", "sublabel": "navegador", "pos": [40, 268], "size": [130, 64] },
+    { "id": "web", "type": "frontend", "label": "Web Angular", "sublabel": "localhost:4200", "pos": [250, 268], "size": [150, 64] },
+    { "id": "catalogo", "type": "backend", "label": "catalog-service", "sublabel": "Spring Boot :8081", "pos": [500, 130], "size": [170, 72], "tag": "cuentas · publicaciones" },
+    { "id": "intercambios", "type": "backend", "label": "exchange-service", "sublabel": "Spring Boot :8082", "pos": [500, 400], "size": [170, 72], "tag": "chat · tratos" },
+    { "id": "dbcat", "type": "database", "label": "monkey_catalog", "sublabel": "MySQL 8", "pos": [800, 130], "size": [160, 64] },
+    { "id": "dbex", "type": "database", "label": "monkey_exchange", "sublabel": "MySQL 8", "pos": [800, 400], "size": [160, 64] },
+    { "id": "rabbit", "type": "messagebus", "label": "RabbitMQ", "sublabel": "puerto 5672", "pos": [800, 268], "size": [160, 64] },
+    { "id": "cloudinary", "type": "cloud", "label": "Cloudinary", "sublabel": "fotos en internet", "pos": [250, 40], "size": [150, 64] }
+  ],
+  "boundaries": [
+    { "kind": "security-group", "label": "Spring Security · JWT en cookie", "wraps": ["catalogo", "intercambios"] }
+  ],
+  "connections": [
+    { "id": "usuario-web", "from": "usuario", "to": "web", "label": "HTTP", "variant": "emphasis" },
+    { "id": "web-catalogo", "from": "web", "to": "catalogo", "label": "REST + cookie", "variant": "emphasis" },
+    { "id": "web-intercambios", "from": "web", "to": "intercambios", "label": "REST + cookie", "variant": "emphasis" },
+    { "id": "catalogo-db", "from": "catalogo", "to": "dbcat", "label": "JPA / SQL" },
+    { "id": "intercambios-db", "from": "intercambios", "to": "dbex", "label": "JPA / SQL", "labelDy": 16 },
+    { "id": "feign", "from": "intercambios", "to": "catalogo", "label": "Feign", "variant": "security" },
+    { "id": "evento", "from": "intercambios", "to": "rabbit", "label": "evento", "variant": "dashed" },
+    { "id": "listener", "from": "rabbit", "to": "catalogo", "label": "@RabbitListener", "variant": "dashed" },
+    { "id": "fotos", "from": "catalogo", "to": "cloudinary", "label": "sube fotos" }
+  ],
+  "cards": [
+    { "dot": "cyan", "title": "Frontend", "items": ["Angular 19 muestra las pantallas", "Llama a la API con credentials: 'include'"] },
+    { "dot": "emerald", "title": "Dos microservicios", "items": ["Catálogo: cuentas, publicaciones, moderación", "Intercambios: chat, tratos, calificaciones"] },
+    { "dot": "amber", "title": "Comunicación", "items": ["Feign y RestClient: HTTP con respuesta inmediata", "RabbitMQ: aviso asíncrono al completar un trueque"] }
+  ]
+}
