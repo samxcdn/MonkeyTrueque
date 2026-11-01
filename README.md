@@ -4,10 +4,6 @@ MonkeyTrueque es una web para **intercambiar, vender o regalar** objetos y servi
 
 Esta guía está pensada para alguien que nunca ha visto el proyecto: primero explica qué hace la web, luego cómo está armada y al final cómo levantarla en tu computadora paso a paso.
 
-> 📘 **Guía completa del equipo:** abre [`docs/guia/index.html`](docs/guia/index.html) en el navegador. Explica carpeta por carpeta, con y sin código, e incluye diagramas, la base de datos, Flyway, la seguridad, RabbitMQ y preguntas para la presentación.
-
----
-
 ## 1. Qué puedes hacer en la web
 
 ### Como visitante (sin cuenta)
